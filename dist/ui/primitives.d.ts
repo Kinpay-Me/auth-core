@@ -54,9 +54,31 @@ export interface FieldProps {
     required?: boolean;
     autoComplete?: string;
     defaultValue?: string;
+    readOnly?: boolean;
+    minLength?: number;
+    inputMode?: "text" | "numeric" | "tel" | "email";
 }
 export declare function Field({ name, label, labelExtra, icon, type, ...input }: FieldProps): import("react").JSX.Element;
-export declare function PasswordField({ name, label, labelExtra, autoComplete, required, placeholder }: Partial<FieldProps>): import("react").JSX.Element;
+export interface PasswordFieldProps {
+    name?: string;
+    label?: ReactNode;
+    labelExtra?: ReactNode;
+    autoComplete?: string;
+    required?: boolean;
+    placeholder?: string;
+    minLength?: number;
+    pattern?: string;
+    /** Controlled value — pass with `onValueChange` (needed for the strength meter). */
+    value?: string;
+    onValueChange?: (value: string) => void;
+    /** Show a strength meter under the field (uses the controlled `value`). */
+    strength?: boolean;
+}
+export declare function PasswordField({ name, label, labelExtra, autoComplete, required, placeholder, minLength, pattern, value, onValueChange, strength, }: PasswordFieldProps): import("react").JSX.Element;
+/** 0–4 strength from length + character-class variety. Presentation only. */
+export declare function PasswordStrengthMeter({ password }: {
+    password: string;
+}): import("react").JSX.Element | null;
 export declare function Checkbox({ checked, onChange, children }: {
     checked: boolean;
     onChange: (v: boolean) => void;

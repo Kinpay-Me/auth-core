@@ -107,6 +107,9 @@ export interface FieldProps {
   required?: boolean;
   autoComplete?: string;
   defaultValue?: string;
+  readOnly?: boolean;
+  minLength?: number;
+  inputMode?: "text" | "numeric" | "tel" | "email";
 }
 
 export function Field({ name, label, labelExtra, icon, type = "text", ...input }: FieldProps) {
@@ -127,8 +130,28 @@ export function Field({ name, label, labelExtra, icon, type = "text", ...input }
   );
 }
 
-export function PasswordField({ name = "password", label, labelExtra, autoComplete = "current-password", required = true, placeholder = "••••••••" }: Partial<FieldProps>) {
+export interface PasswordFieldProps {
+  name?: string;
+  label?: ReactNode;
+  labelExtra?: ReactNode;
+  autoComplete?: string;
+  required?: boolean;
+  placeholder?: string;
+  minLength?: number;
+  pattern?: string;
+  /** Controlled value — pass with `onValueChange` (needed for the strength meter). */
+  value?: string;
+  onValueChange?: (value: string) => void;
+  /** Show a strength meter under the field (uses the controlled `value`). */
+  strength?: boolean;
+}
+
+export function PasswordField({
+  name = "password", label, labelExtra, autoComplete = "current-password",
+  required = true, placeholder = "••••••••", minLength, pattern, value, onValueChange, strength,
+}: PasswordFieldProps) {
   const [show, setShow] = useState(false);
+  const controlled = value !== undefined && onValueChange !== undefined;
   return (
     <div className="kpa-field">
       {(label || labelExtra) && (
@@ -140,12 +163,44 @@ export function PasswordField({ name = "password", label, labelExtra, autoComple
       <div className="kpa-input-wrap">
         <span className="kpa-input-icon"><LockIcon /></span>
         <input id={name} name={name} type={show ? "text" : "password"} className="kpa-input"
-          autoComplete={autoComplete} required={required} placeholder={placeholder} />
+          autoComplete={autoComplete} required={required} placeholder={placeholder}
+          minLength={minLength} pattern={pattern}
+          {...(controlled ? { value, onChange: (e) => onValueChange!(e.target.value) } : {})} />
         <button type="button" className="kpa-input-btn" onClick={() => setShow((s) => !s)}
           aria-label={show ? "Hide password" : "Show password"}>
           {show ? <EyeOffIcon /> : <EyeIcon />}
         </button>
       </div>
+      {strength && <PasswordStrengthMeter password={value ?? ""} />}
+    </div>
+  );
+}
+
+const STRENGTH = [
+  { label: "Too weak", color: "#FF6B6B" },
+  { label: "Weak", color: "#F59E0B" },
+  { label: "Fair", color: "#EAB308" },
+  { label: "Good", color: "#9742E7" },
+  { label: "Strong", color: "#22C55E" },
+];
+
+/** 0–4 strength from length + character-class variety. Presentation only. */
+export function PasswordStrengthMeter({ password }: { password: string }) {
+  if (!password) return null;
+  let met = 0;
+  if (password.length >= 8) met++;
+  if (/[a-z]/.test(password)) met++;
+  if (/[A-Z]/.test(password)) met++;
+  if (/\d/.test(password)) met++;
+  if (/[^a-zA-Z\d]/.test(password)) met++;
+  const score = Math.max(0, met - 1); // 0..4
+  const { label, color } = STRENGTH[score];
+  return (
+    <div className="kpa-strength" style={{ ["--kpa-strength-color" as string]: color }}>
+      <div className="kpa-strength-track">
+        {[0, 1, 2, 3].map((i) => <span key={i} className="kpa-strength-seg" data-on={i <= score} />)}
+      </div>
+      <span className="kpa-strength-label">{label}</span>
     </div>
   );
 }

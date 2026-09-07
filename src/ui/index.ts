@@ -6,10 +6,12 @@
  * dependency the consumer provides (bundled `--external:react`).
  */
 export { Login, type LoginProps, type LoginValues } from "./Login";
+export { Register, type RegisterProps, type RegisterValues } from "./Register";
 
 export {
   AuthCard, type AuthCardProps,
-  AuthForm, Field, type FieldProps, PasswordField, Checkbox,
+  AuthForm, Field, type FieldProps, PasswordField, type PasswordFieldProps,
+  PasswordStrengthMeter, Checkbox,
   SubmitButton, FormError, Divider, AuthLink,
   type LinkLike, type NavProps,
   MailIcon, LockIcon, PhoneIcon, UserIcon, EyeIcon, EyeOffIcon, CheckIcon,

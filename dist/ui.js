@@ -138,6 +138,12 @@ var AUTH_CSS = `
   font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.24em; color: color-mix(in srgb, var(--kpa-muted-fg) 60%, transparent);
 }
 .kpa-badge-dot { width: 3px; height: 3px; border-radius: 999px; background: currentColor; opacity: 0.5; }
+
+.kpa-strength { display: flex; flex-direction: column; gap: 0.375rem; margin-top: 0.5rem; }
+.kpa-strength-track { display: flex; gap: 0.25rem; }
+.kpa-strength-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--kpa-border); transition: background 0.2s; }
+.kpa-strength-seg[data-on="true"] { background: var(--kpa-strength-color, var(--kpa-primary)); }
+.kpa-strength-label { font-size: 0.6875rem; font-weight: 700; color: var(--kpa-strength-color, var(--kpa-muted-fg)); }
 `;
 function AuthStyles() {
   if (typeof document !== "undefined" && document.getElementById(AUTH_STYLE_ID)) {
@@ -237,8 +243,21 @@ function Field({ name, label, labelExtra, icon, type = "text", ...input }) {
     ] })
   ] });
 }
-function PasswordField({ name = "password", label, labelExtra, autoComplete = "current-password", required = true, placeholder = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" }) {
+function PasswordField({
+  name = "password",
+  label,
+  labelExtra,
+  autoComplete = "current-password",
+  required = true,
+  placeholder = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+  minLength,
+  pattern,
+  value,
+  onValueChange,
+  strength
+}) {
   const [show, setShow] = useState(false);
+  const controlled = value !== void 0 && onValueChange !== void 0;
   return /* @__PURE__ */ jsxs("div", { className: "kpa-field", children: [
     (label || labelExtra) && /* @__PURE__ */ jsxs("div", { className: "kpa-field-row", children: [
       label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
@@ -255,7 +274,10 @@ function PasswordField({ name = "password", label, labelExtra, autoComplete = "c
           className: "kpa-input",
           autoComplete,
           required,
-          placeholder
+          placeholder,
+          minLength,
+          pattern,
+          ...controlled ? { value, onChange: (e) => onValueChange(e.target.value) } : {}
         }
       ),
       /* @__PURE__ */ jsx(
@@ -268,7 +290,30 @@ function PasswordField({ name = "password", label, labelExtra, autoComplete = "c
           children: show ? /* @__PURE__ */ jsx(EyeOffIcon, {}) : /* @__PURE__ */ jsx(EyeIcon, {})
         }
       )
-    ] })
+    ] }),
+    strength && /* @__PURE__ */ jsx(PasswordStrengthMeter, { password: value ?? "" })
+  ] });
+}
+var STRENGTH = [
+  { label: "Too weak", color: "#FF6B6B" },
+  { label: "Weak", color: "#F59E0B" },
+  { label: "Fair", color: "#EAB308" },
+  { label: "Good", color: "#9742E7" },
+  { label: "Strong", color: "#22C55E" }
+];
+function PasswordStrengthMeter({ password }) {
+  if (!password) return null;
+  let met = 0;
+  if (password.length >= 8) met++;
+  if (/[a-z]/.test(password)) met++;
+  if (/[A-Z]/.test(password)) met++;
+  if (/\d/.test(password)) met++;
+  if (/[^a-zA-Z\d]/.test(password)) met++;
+  const score = Math.max(0, met - 1);
+  const { label, color } = STRENGTH[score];
+  return /* @__PURE__ */ jsxs("div", { className: "kpa-strength", style: { ["--kpa-strength-color"]: color }, children: [
+    /* @__PURE__ */ jsx("div", { className: "kpa-strength-track", children: [0, 1, 2, 3].map((i) => /* @__PURE__ */ jsx("span", { className: "kpa-strength-seg", "data-on": i <= score }, i)) }),
+    /* @__PURE__ */ jsx("span", { className: "kpa-strength-label", children: label })
   ] });
 }
 function Checkbox({ checked, onChange, children }) {
@@ -369,6 +414,113 @@ function Login({
     ] })
   ] });
 }
+
+// src/ui/Register.tsx
+import { useState as useState3 } from "react";
+import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
+var PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$";
+var DEFAULT_LABELS = {
+  title: "Create your Account",
+  subtitle: "Join the most trusted peer-to-peer lending network",
+  fullName: "Full Name",
+  fullNamePlaceholder: "Your full name",
+  email: "Email Address",
+  emailPlaceholder: "you@example.com",
+  phone: "Mobile Number",
+  phoneOptional: "Mobile Number (Optional)",
+  phonePlaceholder: "+27 XX XXX XXXX",
+  password: "Password",
+  submit: "Sign Up",
+  submitting: "Creating account\u2026",
+  haveAccount: "Already have an account?",
+  signIn: "Sign In"
+};
+function Register({
+  onSubmit,
+  error,
+  pending,
+  brand,
+  theme,
+  badges,
+  notice,
+  whatsappEnabled = false,
+  defaults,
+  emailLocked,
+  loginHref,
+  labels,
+  LinkComponent
+}) {
+  const t = { ...DEFAULT_LABELS, ...labels };
+  const [password, setPassword] = useState3(defaults?.password ?? "");
+  return /* @__PURE__ */ jsxs3(AuthCard, { brand, title: t.title, subtitle: t.subtitle, theme, badges, children: [
+    notice,
+    /* @__PURE__ */ jsx3(FormError, { message: error }),
+    /* @__PURE__ */ jsxs3(AuthForm, { onSubmit: (data) => onSubmit({
+      fullName: String(data.get("fullName") ?? ""),
+      email: String(data.get("email") ?? ""),
+      phone: String(data.get("phone") ?? "") || void 0,
+      password
+    }), children: [
+      /* @__PURE__ */ jsx3(
+        Field,
+        {
+          name: "fullName",
+          label: t.fullName,
+          icon: /* @__PURE__ */ jsx3(UserIcon, {}),
+          autoComplete: "name",
+          placeholder: t.fullNamePlaceholder,
+          required: true,
+          defaultValue: defaults?.fullName
+        }
+      ),
+      /* @__PURE__ */ jsx3(
+        Field,
+        {
+          name: "email",
+          type: "email",
+          label: t.email,
+          icon: /* @__PURE__ */ jsx3(MailIcon, {}),
+          autoComplete: "email",
+          placeholder: t.emailPlaceholder,
+          required: true,
+          defaultValue: defaults?.email,
+          ...emailLocked ? { readOnly: true } : {}
+        }
+      ),
+      /* @__PURE__ */ jsx3(
+        Field,
+        {
+          name: "phone",
+          type: "tel",
+          icon: /* @__PURE__ */ jsx3(PhoneIcon, {}),
+          label: whatsappEnabled ? t.phone : t.phoneOptional,
+          autoComplete: "tel",
+          placeholder: t.phonePlaceholder,
+          required: whatsappEnabled,
+          defaultValue: defaults?.phone
+        }
+      ),
+      /* @__PURE__ */ jsx3(
+        PasswordField,
+        {
+          label: t.password,
+          autoComplete: "new-password",
+          minLength: 8,
+          pattern: PASSWORD_PATTERN,
+          value: password,
+          onValueChange: setPassword,
+          strength: true
+        }
+      ),
+      /* @__PURE__ */ jsx3(SubmitButton, { pending, pendingLabel: t.submitting, children: t.submit })
+    ] }),
+    loginHref && /* @__PURE__ */ jsxs3("div", { className: "kpa-foot", children: [
+      t.haveAccount,
+      " ",
+      /* @__PURE__ */ jsx3(AuthLink, { href: loginHref, className: "kpa-link", LinkComponent, children: t.signIn })
+    ] })
+  ] });
+}
 export {
   AUTH_CSS,
   AUTH_STYLE_ID,
@@ -387,7 +539,9 @@ export {
   Login,
   MailIcon,
   PasswordField,
+  PasswordStrengthMeter,
   PhoneIcon,
+  Register,
   SubmitButton,
   UserIcon
 };

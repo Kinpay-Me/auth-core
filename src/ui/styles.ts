@@ -139,6 +139,12 @@ export const AUTH_CSS = `
   font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.24em; color: color-mix(in srgb, var(--kpa-muted-fg) 60%, transparent);
 }
 .kpa-badge-dot { width: 3px; height: 3px; border-radius: 999px; background: currentColor; opacity: 0.5; }
+
+.kpa-strength { display: flex; flex-direction: column; gap: 0.375rem; margin-top: 0.5rem; }
+.kpa-strength-track { display: flex; gap: 0.25rem; }
+.kpa-strength-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--kpa-border); transition: background 0.2s; }
+.kpa-strength-seg[data-on="true"] { background: var(--kpa-strength-color, var(--kpa-primary)); }
+.kpa-strength-label { font-size: 0.6875rem; font-weight: 700; color: var(--kpa-strength-color, var(--kpa-muted-fg)); }
 `;
 
 /**

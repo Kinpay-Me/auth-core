@@ -587,23 +587,419 @@ function Register({
 }
 
 // src/ui/MagicLinkRequest.tsx
-function MagicLinkRequest(_props) {
-  return null;
+import { useState as useState4 } from "react";
+import { Fragment as Fragment3, jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
+var DEFAULT_LABELS2 = {
+  title: "Sign in with email",
+  subtitle: "Enter your email and we'll send you a link that signs you in instantly \u2014 no password needed.",
+  identifier: "Email address",
+  identifierPlaceholder: "your@email.com",
+  submit: "Send login link",
+  submitting: "Sending\u2026",
+  /** Confirmation heading once the link is sent. */
+  sentTitle: "Check your email",
+  /** Message wraps the identifier: `{before} <strong>X</strong>. {after}` */
+  sentMessageBefore: "We sent a login link to",
+  sentMessageAfter: "It expires in 15 minutes.",
+  backToLogin: "Back to Sign In",
+  useDifferent: "Use a different email"
+};
+function MagicLinkRequest({
+  onSubmit,
+  error,
+  pending,
+  brand,
+  theme,
+  badges,
+  backToLoginHref,
+  labels,
+  LinkComponent
+}) {
+  const t = { ...DEFAULT_LABELS2, ...labels };
+  const [sentTo, setSentTo] = useState4(null);
+  const [submitting, setSubmitting] = useState4(false);
+  async function handleSubmit(identifier) {
+    setSubmitting(true);
+    try {
+      await onSubmit(identifier);
+      setSentTo(identifier);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+  if (sentTo) {
+    return /* @__PURE__ */ jsx4(AuthCard, { brand, theme, badges, children: /* @__PURE__ */ jsx4(
+      StatusScreen,
+      {
+        variant: "success",
+        title: t.sentTitle,
+        message: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+          t.sentMessageBefore,
+          " ",
+          /* @__PURE__ */ jsx4("strong", { children: sentTo }),
+          ". ",
+          t.sentMessageAfter
+        ] }),
+        action: /* @__PURE__ */ jsxs4("div", { className: "kpa-alts", children: [
+          backToLoginHref && /* @__PURE__ */ jsx4(
+            AuthLink,
+            {
+              href: backToLoginHref,
+              className: "kpa-btn",
+              LinkComponent,
+              children: t.backToLogin
+            }
+          ),
+          /* @__PURE__ */ jsx4(
+            "button",
+            {
+              type: "button",
+              className: "kpa-btn kpa-btn-secondary",
+              onClick: () => setSentTo(null),
+              children: t.useDifferent
+            }
+          )
+        ] })
+      }
+    ) });
+  }
+  return /* @__PURE__ */ jsxs4(AuthCard, { brand, title: t.title, subtitle: t.subtitle, theme, badges, children: [
+    /* @__PURE__ */ jsx4(FormError, { message: error }),
+    /* @__PURE__ */ jsxs4(AuthForm, { onSubmit: (data) => handleSubmit(String(data.get("identifier") ?? "")), children: [
+      /* @__PURE__ */ jsx4(
+        Field,
+        {
+          name: "identifier",
+          type: "email",
+          label: t.identifier,
+          icon: /* @__PURE__ */ jsx4(MailIcon, {}),
+          autoComplete: "email",
+          placeholder: t.identifierPlaceholder,
+          required: true
+        }
+      ),
+      /* @__PURE__ */ jsx4(SubmitButton, { pending: pending || submitting, pendingLabel: t.submitting, children: t.submit })
+    ] }),
+    backToLoginHref && /* @__PURE__ */ jsx4("div", { className: "kpa-foot", children: /* @__PURE__ */ jsx4(AuthLink, { href: backToLoginHref, className: "kpa-link", LinkComponent, children: t.backToLogin }) })
+  ] });
 }
 
 // src/ui/MagicLinkCallback.tsx
-function MagicLinkCallback(_props) {
-  return null;
+import { jsx as jsx5, jsxs as jsxs5 } from "react/jsx-runtime";
+var DEFAULT_LABELS3 = {
+  loadingTitle: "Signing you in\u2026",
+  loadingMessage: "Just a moment",
+  successTitle: "You're signed in",
+  successMessage: "Your sign-in link has been verified.",
+  continue: "Continue",
+  errorTitle: "Link expired or already used",
+  errorMessage: "Something went wrong. Please request a new link.",
+  retry: "Back to sign in"
+};
+function MagicLinkCallback({
+  status,
+  errorMessage,
+  continueHref,
+  retryHref,
+  brand,
+  theme,
+  labels,
+  LinkComponent
+}) {
+  const t = { ...DEFAULT_LABELS3, ...labels };
+  return /* @__PURE__ */ jsxs5(AuthCard, { brand, theme, children: [
+    status === "loading" && /* @__PURE__ */ jsx5(
+      StatusScreen,
+      {
+        variant: "loading",
+        title: t.loadingTitle,
+        message: t.loadingMessage
+      }
+    ),
+    status === "success" && /* @__PURE__ */ jsx5(
+      StatusScreen,
+      {
+        variant: "success",
+        title: t.successTitle,
+        message: t.successMessage,
+        action: continueHref ? /* @__PURE__ */ jsx5("div", { className: "kpa-alts", children: /* @__PURE__ */ jsx5(
+          AuthLink,
+          {
+            href: continueHref,
+            className: "kpa-btn kpa-btn-secondary",
+            LinkComponent,
+            children: t.continue
+          }
+        ) }) : void 0
+      }
+    ),
+    status === "error" && /* @__PURE__ */ jsx5(
+      StatusScreen,
+      {
+        variant: "error",
+        title: t.errorTitle,
+        message: errorMessage ?? t.errorMessage,
+        action: retryHref ? /* @__PURE__ */ jsx5("div", { className: "kpa-alts", children: /* @__PURE__ */ jsx5(
+          AuthLink,
+          {
+            href: retryHref,
+            className: "kpa-btn kpa-btn-secondary",
+            LinkComponent,
+            children: t.retry
+          }
+        ) }) : void 0
+      }
+    )
+  ] });
 }
 
 // src/ui/Claim.tsx
-function Claim(_props) {
-  return null;
+import { useState as useState5 } from "react";
+import { jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
+var PASSWORD_PATTERN2 = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$";
+var DEFAULT_LABELS4 = {
+  title: "Claim your account",
+  /** Step 1 subtitle when phone claims are available (WhatsApp on). */
+  subtitleIdentifier: "Your circle manager set up an account for you. Enter your phone number or email to claim it.",
+  /** Step 1 subtitle when only email claims can be delivered (WhatsApp off). */
+  subtitleIdentifierEmailOnly: "Your circle manager set up an account for you. Enter your email to claim it.",
+  /** Step 2 subtitle; `{identifier}` is replaced with the value being claimed. */
+  subtitleVerify: "Enter the code we sent to {identifier}, then choose a password.",
+  identifierPhoneOrEmail: "Phone number or email",
+  identifierEmail: "Email address",
+  identifierPhoneOrEmailPlaceholder: "Phone number or email",
+  identifierEmailPlaceholder: "you@example.com",
+  sendCode: "Send code",
+  sending: "Sending\u2026",
+  otp: "Verification code",
+  password: "Choose a password",
+  submit: "Claim & sign in",
+  submitting: "Setting up\u2026",
+  changeIdentifier: "Use a different phone or email",
+  changeIdentifierEmailOnly: "Use a different email",
+  haveAccount: "Already set up your account?",
+  signIn: "Sign in"
+};
+function Claim({
+  onRequestCode,
+  onVerify,
+  error,
+  pending,
+  whatsappEnabled = false,
+  brand,
+  theme,
+  badges,
+  backToLoginHref,
+  labels,
+  LinkComponent
+}) {
+  const t = { ...DEFAULT_LABELS4, ...labels };
+  const [step, setStep] = useState5("identifier");
+  const [identifier, setIdentifier] = useState5("");
+  const [password, setPassword] = useState5("");
+  async function requestCode(value) {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setIdentifier(trimmed);
+    try {
+      await onRequestCode(trimmed);
+      setStep("verify");
+    } catch {
+    }
+  }
+  const subtitle = step === "identifier" ? whatsappEnabled ? t.subtitleIdentifier : t.subtitleIdentifierEmailOnly : t.subtitleVerify.replace("{identifier}", identifier);
+  return /* @__PURE__ */ jsxs6(AuthCard, { brand, title: t.title, subtitle, theme, badges, children: [
+    /* @__PURE__ */ jsx6(FormError, { message: error }),
+    step === "identifier" ? /* @__PURE__ */ jsxs6(AuthForm, { onSubmit: (data) => requestCode(String(data.get("identifier") ?? "")), children: [
+      /* @__PURE__ */ jsx6(
+        Field,
+        {
+          name: "identifier",
+          type: whatsappEnabled ? "text" : "email",
+          inputMode: whatsappEnabled ? "text" : "email",
+          label: whatsappEnabled ? t.identifierPhoneOrEmail : t.identifierEmail,
+          placeholder: whatsappEnabled ? t.identifierPhoneOrEmailPlaceholder : t.identifierEmailPlaceholder,
+          icon: /* @__PURE__ */ jsx6(MailIcon, {}),
+          autoComplete: "username",
+          required: true
+        }
+      ),
+      /* @__PURE__ */ jsx6(SubmitButton, { pending, pendingLabel: t.sending, children: t.sendCode })
+    ] }) : /* @__PURE__ */ jsxs6(AuthForm, { onSubmit: (data) => onVerify({
+      otp: String(data.get("otp") ?? "").trim(),
+      password
+    }), children: [
+      /* @__PURE__ */ jsx6(OtpField, { label: t.otp, autoFocus: true }),
+      /* @__PURE__ */ jsx6(
+        PasswordField,
+        {
+          label: t.password,
+          autoComplete: "new-password",
+          minLength: 8,
+          pattern: PASSWORD_PATTERN2,
+          value: password,
+          onValueChange: setPassword,
+          strength: true
+        }
+      ),
+      /* @__PURE__ */ jsx6(SubmitButton, { pending, pendingLabel: t.submitting, children: t.submit }),
+      /* @__PURE__ */ jsx6("div", { className: "kpa-foot", children: /* @__PURE__ */ jsx6(
+        "button",
+        {
+          type: "button",
+          className: "kpa-link",
+          onClick: () => setStep("identifier"),
+          children: whatsappEnabled ? t.changeIdentifier : t.changeIdentifierEmailOnly
+        }
+      ) })
+    ] }),
+    backToLoginHref && /* @__PURE__ */ jsxs6("div", { className: "kpa-foot", children: [
+      t.haveAccount,
+      " ",
+      /* @__PURE__ */ jsx6(AuthLink, { href: backToLoginHref, className: "kpa-link", LinkComponent, children: t.signIn })
+    ] })
+  ] });
 }
 
 // src/ui/ForgotPassword.tsx
-function ForgotPassword(_props) {
-  return null;
+import { useState as useState6 } from "react";
+import { Fragment as Fragment4, jsx as jsx7, jsxs as jsxs7 } from "react/jsx-runtime";
+var PASSWORD_PATTERN3 = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$";
+var DEFAULT_LABELS5 = {
+  // email step
+  emailTitle: "Reset your password",
+  emailSubtitle: "Enter your email and we'll send a reset code",
+  email: "Email Address",
+  emailPlaceholder: "you@example.com",
+  requestSubmit: "Send Reset Code",
+  requesting: "Sending\u2026",
+  // otp step
+  otpTitle: "Check your email",
+  otpSubtitle: "We sent a reset code to",
+  otp: "Verification Code",
+  verifySubmit: "Verify Code",
+  verifying: "Verifying\u2026",
+  // new-password step
+  passwordTitle: "Set new password",
+  passwordSubtitle: "Choose a strong password for your account",
+  password: "New Password",
+  passwordSubmit: "Reset Password",
+  settingPassword: "Resetting\u2026",
+  // done step
+  doneTitle: "Password reset",
+  doneMessage: "Your password has been updated. You can now sign in.",
+  // shared
+  backToLogin: "Back to Sign In",
+  signIn: "Sign In"
+};
+function ForgotPassword({
+  onRequestReset,
+  onVerifyCode,
+  onSetPassword,
+  error,
+  pending,
+  brand,
+  theme,
+  badges,
+  backToLoginHref,
+  labels,
+  LinkComponent
+}) {
+  const t = { ...DEFAULT_LABELS5, ...labels };
+  const [step, setStep] = useState6("email");
+  const [email, setEmail] = useState6("");
+  const [password, setPassword] = useState6("");
+  const [busy, setBusy] = useState6(false);
+  const isPending = pending || busy;
+  const run = async (fn, next) => {
+    setBusy(true);
+    try {
+      await fn();
+      setStep(next);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const backLink = backToLoginHref ? /* @__PURE__ */ jsx7("div", { className: "kpa-foot", children: /* @__PURE__ */ jsx7(AuthLink, { href: backToLoginHref, className: "kpa-link", LinkComponent, children: t.backToLogin }) }) : null;
+  if (step === "done") {
+    return /* @__PURE__ */ jsx7(AuthCard, { brand, theme, badges, children: /* @__PURE__ */ jsx7(
+      StatusScreen,
+      {
+        variant: "success",
+        title: t.doneTitle,
+        message: t.doneMessage,
+        action: backToLoginHref ? /* @__PURE__ */ jsx7(AuthLink, { href: backToLoginHref, className: "kpa-btn", LinkComponent, children: t.signIn }) : void 0
+      }
+    ) });
+  }
+  if (step === "new-password") {
+    return /* @__PURE__ */ jsxs7(AuthCard, { brand, title: t.passwordTitle, subtitle: t.passwordSubtitle, theme, badges, children: [
+      /* @__PURE__ */ jsx7(FormError, { message: error }),
+      /* @__PURE__ */ jsxs7(AuthForm, { onSubmit: () => run(() => onSetPassword(password), "done"), children: [
+        /* @__PURE__ */ jsx7(
+          PasswordField,
+          {
+            label: t.password,
+            autoComplete: "new-password",
+            minLength: 8,
+            pattern: PASSWORD_PATTERN3,
+            value: password,
+            onValueChange: setPassword,
+            strength: true
+          }
+        ),
+        /* @__PURE__ */ jsx7(SubmitButton, { pending: isPending, pendingLabel: t.settingPassword, children: t.passwordSubmit })
+      ] }),
+      backLink
+    ] });
+  }
+  if (step === "otp") {
+    return /* @__PURE__ */ jsxs7(
+      AuthCard,
+      {
+        brand,
+        title: t.otpTitle,
+        theme,
+        badges,
+        subtitle: /* @__PURE__ */ jsxs7(Fragment4, { children: [
+          t.otpSubtitle,
+          /* @__PURE__ */ jsx7("br", {}),
+          /* @__PURE__ */ jsx7("strong", { children: email })
+        ] }),
+        children: [
+          /* @__PURE__ */ jsx7(FormError, { message: error }),
+          /* @__PURE__ */ jsxs7(AuthForm, { onSubmit: (data) => run(() => onVerifyCode(String(data.get("otp") ?? "")), "new-password"), children: [
+            /* @__PURE__ */ jsx7(OtpField, { label: t.otp, autoFocus: true }),
+            /* @__PURE__ */ jsx7(SubmitButton, { pending: isPending, pendingLabel: t.verifying, children: t.verifySubmit })
+          ] }),
+          backLink
+        ]
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxs7(AuthCard, { brand, title: t.emailTitle, subtitle: t.emailSubtitle, theme, badges, children: [
+    /* @__PURE__ */ jsx7(FormError, { message: error }),
+    /* @__PURE__ */ jsxs7(AuthForm, { onSubmit: (data) => {
+      const value = String(data.get("email") ?? "");
+      setEmail(value);
+      run(() => onRequestReset(value), "otp");
+    }, children: [
+      /* @__PURE__ */ jsx7(
+        Field,
+        {
+          name: "email",
+          type: "email",
+          label: t.email,
+          icon: /* @__PURE__ */ jsx7(MailIcon, {}),
+          autoComplete: "email",
+          placeholder: t.emailPlaceholder,
+          required: true
+        }
+      ),
+      /* @__PURE__ */ jsx7(SubmitButton, { pending: isPending, pendingLabel: t.requesting, children: t.requestSubmit })
+    ] }),
+    backLink
+  ] });
 }
 export {
   AUTH_CSS,

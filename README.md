@@ -4,17 +4,23 @@ KinPay shared auth core — a configurable, headless session store + API client
 against the consumer identity service. No UI; each app keeps its own screens.
 
 Consumed by the KinPay consumer app and the Circles Portal. First-party, so it's
-resolved by **git URL** (not a private registry) — the built `dist/` is committed
-so consumers install without a build step, a prepare hook, or a registry token:
+installed from a **public tag tarball** (not a private registry) — the built
+`dist/` is committed so consumers install without a build step, a prepare hook, or
+a registry token:
 
 ```
-"@kinpay-me/auth-core": "git+https://github.com/Kinpay-Me/auth-core.git#v0.2.1"
+"@kinpay-me/auth-core": "https://github.com/Kinpay-Me/auth-core/archive/refs/tags/v0.2.1.tar.gz"
 ```
+
+A plain https tarball (rather than a `git+https://` URL) is deliberate: npm
+records GitHub `git+` deps in the lockfile as `git+ssh://`, which then fails to
+install in headless CI that has no SSH key. The tarball resolves over anonymous
+https everywhere and is integrity-pinned in the lockfile.
 
 The published `package.json` is deliberately a pure consumption manifest (no
-`scripts`, `peerDependencies`, or `devDependencies`) so that a git-URL install
-never triggers npm's git-dependency "prepare" pass. React is expected at runtime
-(it's marked `--external` in the bundle); every consumer already provides it.
+`scripts`, `peerDependencies`, or `devDependencies`) so that an install never
+triggers npm's git-dependency "prepare" pass. React is expected at runtime (it's
+marked `--external` in the bundle); every consumer already provides it.
 
 ## Releasing a change
 
@@ -24,4 +30,4 @@ never triggers npm's git-dependency "prepare" pass. React is expected at runtime
    ```
 2. Bump `version` in `package.json`, commit the source **and** `dist/`.
 3. Tag `vX.Y.Z` and push the tag.
-4. Point each consumer's dependency at the new tag.
+4. Point each consumer's dependency at the new tag's tarball URL.

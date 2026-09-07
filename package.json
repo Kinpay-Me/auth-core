@@ -1,6 +1,6 @@
 {
   "name": "kinpay-auth-core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "description": "KinPay shared auth core — configurable, headless session store + API client against the consumer identity service. No UI; each app keeps its own screens.",
   "main": "./dist/index.js",

@@ -199,7 +199,7 @@ function safeRedirect(raw, opts = {}) {
   const fallback = opts.fallback ?? "/";
   if (!raw) return fallback;
   if (raw.startsWith("/")) {
-    return raw.startsWith("//") ? fallback : raw;
+    return /^\/[/\\]/.test(raw) ? fallback : raw;
   }
   try {
     const url = new URL(raw);

@@ -193,8 +193,29 @@ function createApiClient(opts) {
   client.delete = (endpoint, options) => api(endpoint, { ...options, method: "DELETE" });
   return client;
 }
+
+// src/redirect.ts
+function safeRedirect(raw, opts = {}) {
+  const fallback = opts.fallback ?? "/";
+  if (!raw) return fallback;
+  if (raw.startsWith("/")) {
+    return raw.startsWith("//") ? fallback : raw;
+  }
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return fallback;
+    const host = url.hostname.toLowerCase();
+    const allowed = (opts.allowedHosts ?? []).some(
+      (h) => host === h.toLowerCase() || host.endsWith(`.${h.toLowerCase()}`)
+    );
+    return allowed ? raw : fallback;
+  } catch {
+    return fallback;
+  }
+}
 export {
   ApiError,
   createApiClient,
-  createCookieSessionStore
+  createCookieSessionStore,
+  safeRedirect
 };

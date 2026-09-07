@@ -144,6 +144,27 @@ var AUTH_CSS = `
 .kpa-strength-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--kpa-border); transition: background 0.2s; }
 .kpa-strength-seg[data-on="true"] { background: var(--kpa-strength-color, var(--kpa-primary)); }
 .kpa-strength-label { font-size: 0.6875rem; font-weight: 700; color: var(--kpa-strength-color, var(--kpa-muted-fg)); }
+
+.kpa-otp {
+  width: 100%; height: 3.25rem; text-align: center; letter-spacing: 0.5em; padding-left: 0.5em;
+  font-size: 1.25rem; font-weight: 700; font-family: inherit;
+  background: var(--kpa-field-bg); color: var(--kpa-fg);
+  border: 1px solid var(--kpa-border); border-radius: var(--kpa-radius); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.kpa-otp:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
+
+.kpa-status { text-align: center; padding: 0.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.875rem; }
+.kpa-status-icon { width: 3.5rem; height: 3.5rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
+.kpa-status-icon[data-variant="loading"] { color: var(--kpa-primary); }
+.kpa-status-icon[data-variant="success"] { background: color-mix(in srgb, #22C55E 12%, transparent); color: #22C55E; }
+.kpa-status-icon[data-variant="error"] { background: color-mix(in srgb, var(--kpa-danger) 12%, transparent); color: var(--kpa-danger); }
+.kpa-status-icon[data-variant="info"] { background: var(--kpa-muted); color: var(--kpa-primary); }
+.kpa-status-title { font-size: 1.125rem; font-weight: 800; letter-spacing: -0.01em; margin: 0; }
+.kpa-status-msg { font-size: 0.875rem; color: var(--kpa-muted-fg); margin: 0; line-height: 1.5; }
+.kpa-status-msg strong { color: var(--kpa-fg); font-weight: 700; }
+.kpa-spin { animation: kpa-spin 0.8s linear infinite; }
+@keyframes kpa-spin { to { transform: rotate(360deg); } }
 `;
 function AuthStyles() {
   if (typeof document !== "undefined" && document.getElementById(AUTH_STYLE_ID)) {
@@ -342,6 +363,49 @@ function AuthForm({ onSubmit, children }) {
     onSubmit(new FormData(e.currentTarget), e);
   }, children });
 }
+var SpinnerIcon = ({ size = 28 }) => /* @__PURE__ */ jsxs("svg", { className: "kpa-spin", width: size, height: size, viewBox: "0 0 24 24", fill: "none", "aria-hidden": true, children: [
+  /* @__PURE__ */ jsx("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "3", strokeOpacity: "0.2" }),
+  /* @__PURE__ */ jsx("path", { d: "M21 12a9 9 0 0 0-9-9", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round" })
+] });
+var CheckCircleIcon = ({ size = 30 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("circle", { cx: "12", cy: "12", r: "10" }),
+  /* @__PURE__ */ jsx("path", { d: "m9 12 2 2 4-4" })
+] }));
+var XCircleIcon = ({ size = 30 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("circle", { cx: "12", cy: "12", r: "10" }),
+  /* @__PURE__ */ jsx("path", { d: "m15 9-6 6" }),
+  /* @__PURE__ */ jsx("path", { d: "m9 9 6 6" })
+] }));
+function OtpField({ name = "otp", label, length = 6, value, onValueChange, autoFocus }) {
+  const controlled = value !== void 0 && onValueChange !== void 0;
+  return /* @__PURE__ */ jsxs("div", { className: "kpa-field", children: [
+    label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
+    /* @__PURE__ */ jsx(
+      "input",
+      {
+        id: name,
+        name,
+        className: "kpa-otp",
+        inputMode: "numeric",
+        autoComplete: "one-time-code",
+        maxLength: length,
+        placeholder: "\xB7".repeat(length),
+        autoFocus,
+        required: true,
+        ...controlled ? { value, onChange: (e) => onValueChange(e.target.value.replace(/\D/g, "").slice(0, length)) } : {}
+      }
+    )
+  ] });
+}
+function StatusScreen({ variant = "info", icon, title, message, action }) {
+  const defaultIcon = variant === "loading" ? /* @__PURE__ */ jsx(SpinnerIcon, {}) : variant === "success" ? /* @__PURE__ */ jsx(CheckCircleIcon, {}) : variant === "error" ? /* @__PURE__ */ jsx(XCircleIcon, {}) : /* @__PURE__ */ jsx(MailIcon, { size: 28 });
+  return /* @__PURE__ */ jsxs("div", { className: "kpa-status", children: [
+    /* @__PURE__ */ jsx("div", { className: "kpa-status-icon", "data-variant": variant, children: icon ?? defaultIcon }),
+    title && /* @__PURE__ */ jsx("h2", { className: "kpa-status-title", children: title }),
+    message && /* @__PURE__ */ jsx("p", { className: "kpa-status-msg", children: message }),
+    action
+  ] });
+}
 
 // src/ui/Login.tsx
 import { Fragment as Fragment2, jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
@@ -521,6 +585,26 @@ function Register({
     ] })
   ] });
 }
+
+// src/ui/MagicLinkRequest.tsx
+function MagicLinkRequest(_props) {
+  return null;
+}
+
+// src/ui/MagicLinkCallback.tsx
+function MagicLinkCallback(_props) {
+  return null;
+}
+
+// src/ui/Claim.tsx
+function Claim(_props) {
+  return null;
+}
+
+// src/ui/ForgotPassword.tsx
+function ForgotPassword(_props) {
+  return null;
+}
 export {
   AUTH_CSS,
   AUTH_STYLE_ID,
@@ -528,20 +612,29 @@ export {
   AuthForm,
   AuthLink,
   AuthStyles,
+  CheckCircleIcon,
   CheckIcon,
   Checkbox,
+  Claim,
   Divider,
   EyeIcon,
   EyeOffIcon,
   Field,
+  ForgotPassword,
   FormError,
   LockIcon,
   Login,
+  MagicLinkCallback,
+  MagicLinkRequest,
   MailIcon,
+  OtpField,
   PasswordField,
   PasswordStrengthMeter,
   PhoneIcon,
   Register,
+  SpinnerIcon,
+  StatusScreen,
   SubmitButton,
-  UserIcon
+  UserIcon,
+  XCircleIcon
 };

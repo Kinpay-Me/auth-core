@@ -145,6 +145,27 @@ export const AUTH_CSS = `
 .kpa-strength-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--kpa-border); transition: background 0.2s; }
 .kpa-strength-seg[data-on="true"] { background: var(--kpa-strength-color, var(--kpa-primary)); }
 .kpa-strength-label { font-size: 0.6875rem; font-weight: 700; color: var(--kpa-strength-color, var(--kpa-muted-fg)); }
+
+.kpa-otp {
+  width: 100%; height: 3.25rem; text-align: center; letter-spacing: 0.5em; padding-left: 0.5em;
+  font-size: 1.25rem; font-weight: 700; font-family: inherit;
+  background: var(--kpa-field-bg); color: var(--kpa-fg);
+  border: 1px solid var(--kpa-border); border-radius: var(--kpa-radius); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.kpa-otp:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
+
+.kpa-status { text-align: center; padding: 0.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.875rem; }
+.kpa-status-icon { width: 3.5rem; height: 3.5rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
+.kpa-status-icon[data-variant="loading"] { color: var(--kpa-primary); }
+.kpa-status-icon[data-variant="success"] { background: color-mix(in srgb, #22C55E 12%, transparent); color: #22C55E; }
+.kpa-status-icon[data-variant="error"] { background: color-mix(in srgb, var(--kpa-danger) 12%, transparent); color: var(--kpa-danger); }
+.kpa-status-icon[data-variant="info"] { background: var(--kpa-muted); color: var(--kpa-primary); }
+.kpa-status-title { font-size: 1.125rem; font-weight: 800; letter-spacing: -0.01em; margin: 0; }
+.kpa-status-msg { font-size: 0.875rem; color: var(--kpa-muted-fg); margin: 0; line-height: 1.5; }
+.kpa-status-msg strong { color: var(--kpa-fg); font-weight: 700; }
+.kpa-spin { animation: kpa-spin 0.8s linear infinite; }
+@keyframes kpa-spin { to { transform: rotate(360deg); } }
 `;
 
 /**

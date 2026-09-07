@@ -100,4 +100,26 @@ export declare function AuthForm({ onSubmit, children }: {
     onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void;
     children: ReactNode;
 }): import("react").JSX.Element;
+export declare const SpinnerIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const CheckCircleIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const XCircleIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export interface OtpFieldProps {
+    name?: string;
+    label?: ReactNode;
+    length?: number;
+    value?: string;
+    onValueChange?: (value: string) => void;
+    autoFocus?: boolean;
+}
+export declare function OtpField({ name, label, length, value, onValueChange, autoFocus }: OtpFieldProps): import("react").JSX.Element;
+export interface StatusScreenProps {
+    variant?: "loading" | "success" | "error" | "info";
+    /** Override the default variant icon. */
+    icon?: ReactNode;
+    title?: ReactNode;
+    message?: ReactNode;
+    /** Optional CTA row (buttons/links). */
+    action?: ReactNode;
+}
+export declare function StatusScreen({ variant, icon, title, message, action }: StatusScreenProps): import("react").JSX.Element;
 export {};

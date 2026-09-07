@@ -245,3 +245,64 @@ export function AuthForm({ onSubmit, children }: { onSubmit: (data: FormData, e:
     </form>
   );
 }
+
+/* ── Status icons ────────────────────────────────────────────────────────── */
+export const SpinnerIcon = ({ size = 28 }: IconProps) => (
+  <svg className="kpa-spin" width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" strokeOpacity="0.2" />
+    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+  </svg>
+);
+export const CheckCircleIcon = ({ size = 30 }: IconProps) => svg(size, <><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></>);
+export const XCircleIcon = ({ size = 30 }: IconProps) => svg(size, <><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></>);
+
+/* ── OTP / code input ────────────────────────────────────────────────────── */
+export interface OtpFieldProps {
+  name?: string;
+  label?: ReactNode;
+  length?: number;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  autoFocus?: boolean;
+}
+
+export function OtpField({ name = "otp", label, length = 6, value, onValueChange, autoFocus }: OtpFieldProps) {
+  const controlled = value !== undefined && onValueChange !== undefined;
+  return (
+    <div className="kpa-field">
+      {label && <label htmlFor={name} className="kpa-label">{label}</label>}
+      <input
+        id={name} name={name} className="kpa-otp" inputMode="numeric" autoComplete="one-time-code"
+        maxLength={length} placeholder={"·".repeat(length)} autoFocus={autoFocus} required
+        {...(controlled ? { value, onChange: (e) => onValueChange!(e.target.value.replace(/\D/g, "").slice(0, length)) } : {})}
+      />
+    </div>
+  );
+}
+
+/* ── Status screen (sent / verifying / success / error) ──────────────────── */
+export interface StatusScreenProps {
+  variant?: "loading" | "success" | "error" | "info";
+  /** Override the default variant icon. */
+  icon?: ReactNode;
+  title?: ReactNode;
+  message?: ReactNode;
+  /** Optional CTA row (buttons/links). */
+  action?: ReactNode;
+}
+
+export function StatusScreen({ variant = "info", icon, title, message, action }: StatusScreenProps) {
+  const defaultIcon =
+    variant === "loading" ? <SpinnerIcon /> :
+    variant === "success" ? <CheckCircleIcon /> :
+    variant === "error" ? <XCircleIcon /> :
+    <MailIcon size={28} />;
+  return (
+    <div className="kpa-status">
+      <div className="kpa-status-icon" data-variant={variant}>{icon ?? defaultIcon}</div>
+      {title && <h2 className="kpa-status-title">{title}</h2>}
+      {message && <p className="kpa-status-msg">{message}</p>}
+      {action}
+    </div>
+  );
+}

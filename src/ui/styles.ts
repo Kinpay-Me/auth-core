@@ -169,13 +169,16 @@ export const AUTH_CSS = `
 `;
 
 /**
- * Injects {@link AUTH_CSS} exactly once. Rendered by every screen, so consumers
- * never import a stylesheet. It renders a real <style> element (SSR-safe: the
- * markup is in the server output too), and dedupes by id at runtime.
+ * Injects {@link AUTH_CSS} once, so consumers never import a stylesheet. Uses
+ * React 19's stylesheet hoisting: a `<style href precedence>` is moved into
+ * <head> and deduped by `href` across every screen that renders it.
+ *
+ * It must render UNCONDITIONALLY — an earlier version returned null on the client
+ * when the style already existed, which is a server/client mismatch (SSR emits
+ * the <style>, client emits null) that makes React drop the node during
+ * hydration, leaving the screens unstyled. React's own dedupe (by href) is what
+ * prevents duplicates now.
  */
-export function AuthStyles(): ReactElement | null {
-  if (typeof document !== "undefined" && document.getElementById(AUTH_STYLE_ID)) {
-    return null;
-  }
-  return createElement("style", { id: AUTH_STYLE_ID, dangerouslySetInnerHTML: { __html: AUTH_CSS } });
+export function AuthStyles(): ReactElement {
+  return createElement("style", { href: AUTH_STYLE_ID, precedence: "default", children: AUTH_CSS });
 }

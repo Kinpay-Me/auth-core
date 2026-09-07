@@ -167,10 +167,7 @@ var AUTH_CSS = `
 @keyframes kpa-spin { to { transform: rotate(360deg); } }
 `;
 function AuthStyles() {
-  if (typeof document !== "undefined" && document.getElementById(AUTH_STYLE_ID)) {
-    return null;
-  }
-  return createElement("style", { id: AUTH_STYLE_ID, dangerouslySetInnerHTML: { __html: AUTH_CSS } });
+  return createElement("style", { href: AUTH_STYLE_ID, precedence: "default", children: AUTH_CSS });
 }
 
 // src/ui/primitives.tsx

@@ -10,7 +10,7 @@
 import { useState, type ReactNode } from "react";
 import {
   AuthCard, AuthForm, Field, PasswordField, OtpField, StatusScreen,
-  SubmitButton, FormError, AuthLink, MailIcon, type LinkLike,
+  SubmitButton, FormError, Divider, AuthLink, MailIcon, type LinkLike,
 } from "./primitives";
 
 const PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$";
@@ -43,6 +43,7 @@ const DEFAULT_LABELS = {
   // shared
   backToLogin: "Back to Sign In",
   signIn: "Sign In",
+  magicLink: "Email me a sign-in link instead",
 };
 
 export interface ForgotPasswordProps {
@@ -59,6 +60,8 @@ export interface ForgotPasswordProps {
 
   /** Shown as a "Back to Sign In" link and the success CTA when provided. */
   backToLoginHref?: string;
+  /** When set, the email step offers an "email me a sign-in link instead" affordance. */
+  magicLinkHref?: string;
 
   labels?: Partial<typeof DEFAULT_LABELS>;
   LinkComponent?: LinkLike;
@@ -68,7 +71,7 @@ export function ForgotPassword({
   onRequestReset, onVerifyCode, onSetPassword,
   error, pending,
   brand, theme, badges,
-  backToLoginHref,
+  backToLoginHref, magicLinkHref,
   labels, LinkComponent,
 }: ForgotPasswordProps) {
   const t = { ...DEFAULT_LABELS, ...labels };
@@ -163,6 +166,22 @@ export function ForgotPassword({
         />
         <SubmitButton pending={isPending} pendingLabel={t.requesting}>{t.requestSubmit}</SubmitButton>
       </AuthForm>
+      {magicLinkHref && (
+        <>
+          <Divider />
+          <div className="kpa-alts">
+            <AuthLink
+              href={magicLinkHref}
+              className="kpa-btn kpa-btn-secondary"
+              aria-label={t.magicLink}
+              LinkComponent={LinkComponent}
+            >
+              <MailIcon size={16} />
+              {t.magicLink}
+            </AuthLink>
+          </div>
+        </>
+      )}
       {backLink}
     </AuthCard>
   );

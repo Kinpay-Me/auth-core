@@ -887,7 +887,8 @@ var DEFAULT_LABELS5 = {
   doneMessage: "Your password has been updated. You can now sign in.",
   // shared
   backToLogin: "Back to Sign In",
-  signIn: "Sign In"
+  signIn: "Sign In",
+  magicLink: "Email me a sign-in link instead"
 };
 function ForgotPassword({
   onRequestReset,
@@ -899,6 +900,7 @@ function ForgotPassword({
   theme,
   badges,
   backToLoginHref,
+  magicLinkHref,
   labels,
   LinkComponent
 }) {
@@ -994,6 +996,22 @@ function ForgotPassword({
         }
       ),
       /* @__PURE__ */ jsx7(SubmitButton, { pending: isPending, pendingLabel: t.requesting, children: t.requestSubmit })
+    ] }),
+    magicLinkHref && /* @__PURE__ */ jsxs7(Fragment4, { children: [
+      /* @__PURE__ */ jsx7(Divider, {}),
+      /* @__PURE__ */ jsx7("div", { className: "kpa-alts", children: /* @__PURE__ */ jsxs7(
+        AuthLink,
+        {
+          href: magicLinkHref,
+          className: "kpa-btn kpa-btn-secondary",
+          "aria-label": t.magicLink,
+          LinkComponent,
+          children: [
+            /* @__PURE__ */ jsx7(MailIcon, { size: 16 }),
+            t.magicLink
+          ]
+        }
+      ) })
     ] }),
     backLink
   ] });

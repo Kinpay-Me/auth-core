@@ -30,6 +30,7 @@ declare const DEFAULT_LABELS: {
     doneMessage: string;
     backToLogin: string;
     signIn: string;
+    magicLink: string;
 };
 export interface ForgotPasswordProps {
     onRequestReset: (email: string) => void | Promise<void>;
@@ -42,8 +43,10 @@ export interface ForgotPasswordProps {
     badges?: string[];
     /** Shown as a "Back to Sign In" link and the success CTA when provided. */
     backToLoginHref?: string;
+    /** When set, the email step offers an "email me a sign-in link instead" affordance. */
+    magicLinkHref?: string;
     labels?: Partial<typeof DEFAULT_LABELS>;
     LinkComponent?: LinkLike;
 }
-export declare function ForgotPassword({ onRequestReset, onVerifyCode, onSetPassword, error, pending, brand, theme, badges, backToLoginHref, labels, LinkComponent, }: ForgotPasswordProps): import("react").JSX.Element;
+export declare function ForgotPassword({ onRequestReset, onVerifyCode, onSetPassword, error, pending, brand, theme, badges, backToLoginHref, magicLinkHref, labels, LinkComponent, }: ForgotPasswordProps): import("react").JSX.Element;
 export {};

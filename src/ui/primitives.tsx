@@ -130,6 +130,30 @@ export function Field({ name, label, labelExtra, icon, type = "text", ...input }
   );
 }
 
+export interface SelectFieldProps {
+  name: string;
+  label?: ReactNode;
+  options: { value: string; label: string }[];
+  defaultValue?: string;
+  required?: boolean;
+}
+
+/** A labelled <select> styled to match Field — uncontrolled, read via FormData. */
+export function SelectField({ name, label, options, defaultValue, required }: SelectFieldProps) {
+  return (
+    <div className="kpa-field">
+      {label && <label htmlFor={name} className="kpa-label">{label}</label>}
+      <div className="kpa-input-wrap">
+        <select id={name} name={name} className="kpa-input" defaultValue={defaultValue} required={required}>
+          {options.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
 export interface PasswordFieldProps {
   name?: string;
   label?: ReactNode;

@@ -11,10 +11,11 @@ export { MagicLinkRequest, type MagicLinkRequestProps } from "./MagicLinkRequest
 export { MagicLinkCallback, type MagicLinkCallbackProps } from "./MagicLinkCallback";
 export { Claim, type ClaimProps, type ClaimValues } from "./Claim";
 export { ForgotPassword, type ForgotPasswordProps } from "./ForgotPassword";
+export { ProfileForm, type ProfileFormProps, type ProfileValues } from "./ProfileForm";
 
 export {
   AuthCard, type AuthCardProps,
-  AuthForm, Field, type FieldProps, PasswordField, type PasswordFieldProps,
+  AuthForm, Field, type FieldProps, SelectField, type SelectFieldProps, PasswordField, type PasswordFieldProps,
   PasswordStrengthMeter, Checkbox,
   OtpField, type OtpFieldProps, StatusScreen, type StatusScreenProps,
   SubmitButton, FormError, Divider, AuthLink,

@@ -59,6 +59,18 @@ export interface FieldProps {
     inputMode?: "text" | "numeric" | "tel" | "email";
 }
 export declare function Field({ name, label, labelExtra, icon, type, ...input }: FieldProps): import("react").JSX.Element;
+export interface SelectFieldProps {
+    name: string;
+    label?: ReactNode;
+    options: {
+        value: string;
+        label: string;
+    }[];
+    defaultValue?: string;
+    required?: boolean;
+}
+/** A labelled <select> styled to match Field — uncontrolled, read via FormData. */
+export declare function SelectField({ name, label, options, defaultValue, required }: SelectFieldProps): import("react").JSX.Element;
 export interface PasswordFieldProps {
     name?: string;
     label?: ReactNode;

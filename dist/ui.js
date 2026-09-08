@@ -261,6 +261,12 @@ function Field({ name, label, labelExtra, icon, type = "text", ...input }) {
     ] })
   ] });
 }
+function SelectField({ name, label, options, defaultValue, required }) {
+  return /* @__PURE__ */ jsxs("div", { className: "kpa-field", children: [
+    label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
+    /* @__PURE__ */ jsx("div", { className: "kpa-input-wrap", children: /* @__PURE__ */ jsx("select", { id: name, name, className: "kpa-input", defaultValue, required, children: options.map((o) => /* @__PURE__ */ jsx("option", { value: o.value, children: o.label }, o.value)) }) })
+  ] });
+}
 function PasswordField({
   name = "password",
   label,
@@ -1016,6 +1022,136 @@ function ForgotPassword({
     backLink
   ] });
 }
+
+// src/ui/ProfileForm.tsx
+import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
+var DEFAULT_LANGUAGES = [
+  { value: "en", label: "English" },
+  { value: "sw", label: "Kiswahili" }
+];
+var DEFAULT_CURRENCIES = [
+  { value: "ZMW", label: "ZMW \u2014 Zambian Kwacha" },
+  { value: "USD", label: "USD \u2014 US Dollar" }
+];
+function ProfileForm({
+  initial = {},
+  onSubmit,
+  error,
+  pending,
+  languageOptions = DEFAULT_LANGUAGES,
+  currencyOptions = DEFAULT_CURRENCIES,
+  brand,
+  title = "Your details",
+  subtitle = "Update your personal information.",
+  theme,
+  submitLabel = "Save changes",
+  labels = {}
+}) {
+  const l = {
+    fullName: "Full name",
+    phone: "Phone number",
+    email: "Email",
+    language: "Language",
+    currency: "Currency",
+    dob: "Date of birth",
+    address: "Street address",
+    country: "Country of residence",
+    ...labels
+  };
+  return /* @__PURE__ */ jsxs8(AuthCard, { brand, title, subtitle, theme, children: [
+    /* @__PURE__ */ jsx8(AuthStyles, {}),
+    /* @__PURE__ */ jsx8(FormError, { message: error }),
+    /* @__PURE__ */ jsxs8(AuthForm, { onSubmit: (data) => onSubmit({
+      full_name: String(data.get("full_name") ?? "").trim(),
+      phone_number: String(data.get("phone_number") ?? "").trim(),
+      preferred_language: String(data.get("preferred_language") ?? ""),
+      preferred_currency: String(data.get("preferred_currency") ?? ""),
+      date_of_birth: String(data.get("date_of_birth") ?? ""),
+      street_address: String(data.get("street_address") ?? "").trim(),
+      country_of_residence: String(data.get("country_of_residence") ?? "").trim()
+    }), children: [
+      /* @__PURE__ */ jsx8(
+        Field,
+        {
+          name: "full_name",
+          label: l.fullName,
+          icon: /* @__PURE__ */ jsx8(UserIcon, {}),
+          defaultValue: initial.full_name ?? "",
+          autoComplete: "name",
+          required: true
+        }
+      ),
+      /* @__PURE__ */ jsx8(
+        Field,
+        {
+          name: "phone_number",
+          label: l.phone,
+          icon: /* @__PURE__ */ jsx8(PhoneIcon, {}),
+          type: "tel",
+          inputMode: "tel",
+          defaultValue: initial.phone_number ?? "",
+          autoComplete: "tel"
+        }
+      ),
+      initial.email != null && /* @__PURE__ */ jsx8(
+        Field,
+        {
+          name: "email_display",
+          label: l.email,
+          defaultValue: initial.email ?? "",
+          readOnly: true,
+          autoComplete: "email"
+        }
+      ),
+      /* @__PURE__ */ jsx8(
+        SelectField,
+        {
+          name: "preferred_language",
+          label: l.language,
+          options: languageOptions,
+          defaultValue: initial.preferred_language
+        }
+      ),
+      /* @__PURE__ */ jsx8(
+        SelectField,
+        {
+          name: "preferred_currency",
+          label: l.currency,
+          options: currencyOptions,
+          defaultValue: initial.preferred_currency
+        }
+      ),
+      /* @__PURE__ */ jsx8(
+        Field,
+        {
+          name: "date_of_birth",
+          label: l.dob,
+          type: "date",
+          defaultValue: initial.date_of_birth ?? ""
+        }
+      ),
+      /* @__PURE__ */ jsx8(
+        Field,
+        {
+          name: "street_address",
+          label: l.address,
+          defaultValue: initial.street_address ?? "",
+          autoComplete: "street-address"
+        }
+      ),
+      /* @__PURE__ */ jsx8(
+        Field,
+        {
+          name: "country_of_residence",
+          label: l.country,
+          defaultValue: initial.country_of_residence ?? "",
+          autoComplete: "country-name"
+        }
+      ),
+      /* @__PURE__ */ jsx8(SubmitButton, { pending, pendingLabel: "Saving\u2026", children: submitLabel })
+    ] })
+  ] });
+}
 export {
   AUTH_CSS,
   AUTH_STYLE_ID,
@@ -1042,7 +1178,9 @@ export {
   PasswordField,
   PasswordStrengthMeter,
   PhoneIcon,
+  ProfileForm,
   Register,
+  SelectField,
   SpinnerIcon,
   StatusScreen,
   SubmitButton,

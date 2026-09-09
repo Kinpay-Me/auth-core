@@ -12,17 +12,22 @@ import { createElement } from "react";
 var AUTH_STYLE_ID = "kinpay-auth-core-ui";
 var AUTH_CSS = `
 .kpa-root {
-  --kpa-bg: #FFFFFF;
-  --kpa-fg: #1A0F2E;
-  --kpa-primary: #9742E7;
-  --kpa-primary-from: #7732E8;
-  --kpa-primary-to: #B453E6;
-  --kpa-primary-fg: #FFFFFF;
-  --kpa-muted: #F2EFFE;
-  --kpa-muted-fg: #9580B3;
-  --kpa-border: #ECE6F8;
-  --kpa-field-bg: #F7F5FE;
-  --kpa-danger: #FF6B6B;
+  /* Derive from the host app's design tokens (shadcn/Tailwind convention) so the
+     shared surfaces wear the consuming app's \u2014 and its TENANT's \u2014 brand: circles
+     injects the tenant's colour as --primary, so a lime tenant gets lime buttons.
+     KinPay purple is only the fallback when a token is absent. The gradient
+     collapses to the solid --primary unless the host defines its own from/to. */
+  --kpa-bg: var(--card, #FFFFFF);
+  --kpa-fg: var(--foreground, #1A0F2E);
+  --kpa-primary: var(--primary, #9742E7);
+  --kpa-primary-from: var(--kpa-gradient-from, var(--primary, #7732E8));
+  --kpa-primary-to: var(--kpa-gradient-to, var(--primary, #B453E6));
+  --kpa-primary-fg: var(--primary-foreground, #FFFFFF);
+  --kpa-muted: var(--muted, #F2EFFE);
+  --kpa-muted-fg: var(--muted-foreground, #9580B3);
+  --kpa-border: var(--border, #ECE6F8);
+  --kpa-field-bg: var(--input, #F7F5FE);
+  --kpa-danger: var(--destructive, #FF6B6B);
   --kpa-radius: 16px;
   --kpa-radius-sm: 12px;
   --kpa-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -38,29 +43,29 @@ var AUTH_CSS = `
 
 @media (prefers-color-scheme: dark) {
   .kpa-root:not([data-kpa-theme="light"]) {
-    --kpa-bg: #120A1E;
-    --kpa-fg: #F0EAFF;
-    --kpa-primary: #B47BF0;
-    --kpa-primary-from: #9742E7;
-    --kpa-primary-to: #C96CF5;
-    --kpa-muted: #261A3A;
-    --kpa-muted-fg: #8B77A8;
-    --kpa-border: #2E2246;
-    --kpa-field-bg: #1B1030;
-    --kpa-danger: #FCA5A5;
+    --kpa-bg: var(--card, #120A1E);
+    --kpa-fg: var(--foreground, #F0EAFF);
+    --kpa-primary: var(--primary, #B47BF0);
+    --kpa-primary-from: var(--kpa-gradient-from, var(--primary, #9742E7));
+    --kpa-primary-to: var(--kpa-gradient-to, var(--primary, #C96CF5));
+    --kpa-muted: var(--muted, #261A3A);
+    --kpa-muted-fg: var(--muted-foreground, #8B77A8);
+    --kpa-border: var(--border, #2E2246);
+    --kpa-field-bg: var(--input, #1B1030);
+    --kpa-danger: var(--destructive, #FCA5A5);
   }
 }
 .kpa-root[data-kpa-theme="dark"] {
-  --kpa-bg: #120A1E;
-  --kpa-fg: #F0EAFF;
-  --kpa-primary: #B47BF0;
-  --kpa-primary-from: #9742E7;
-  --kpa-primary-to: #C96CF5;
-  --kpa-muted: #261A3A;
-  --kpa-muted-fg: #8B77A8;
-  --kpa-border: #2E2246;
-  --kpa-field-bg: #1B1030;
-  --kpa-danger: #FCA5A5;
+  --kpa-bg: var(--card, #120A1E);
+  --kpa-fg: var(--foreground, #F0EAFF);
+  --kpa-primary: var(--primary, #B47BF0);
+  --kpa-primary-from: var(--kpa-gradient-from, var(--primary, #9742E7));
+  --kpa-primary-to: var(--kpa-gradient-to, var(--primary, #C96CF5));
+  --kpa-muted: var(--muted, #261A3A);
+  --kpa-muted-fg: var(--muted-foreground, #8B77A8);
+  --kpa-border: var(--border, #2E2246);
+  --kpa-field-bg: var(--input, #1B1030);
+  --kpa-danger: var(--destructive, #FCA5A5);
 }
 
 .kpa-head { text-align: center; margin-bottom: 2rem; }

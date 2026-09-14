@@ -32,6 +32,11 @@ export declare const UserIcon: ({ size }: IconProps) => import("react").JSX.Elem
 export declare const EyeIcon: ({ size }: IconProps) => import("react").JSX.Element;
 export declare const EyeOffIcon: ({ size }: IconProps) => import("react").JSX.Element;
 export declare const CheckIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const LanguagesIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const CoinIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const CalendarIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const MapPinIcon: ({ size }: IconProps) => import("react").JSX.Element;
+export declare const GlobeIcon: ({ size }: IconProps) => import("react").JSX.Element;
 export interface AuthCardProps {
     /** Optional brand/logo rendered centered above the heading. */
     brand?: ReactNode;
@@ -57,8 +62,10 @@ export interface FieldProps {
     readOnly?: boolean;
     minLength?: number;
     inputMode?: "text" | "numeric" | "tel" | "email";
+    /** Extra class on the field wrapper — e.g. "kpa-col-full" to span a grid row. */
+    className?: string;
 }
-export declare function Field({ name, label, labelExtra, icon, type, ...input }: FieldProps): import("react").JSX.Element;
+export declare function Field({ name, label, labelExtra, icon, type, className, ...input }: FieldProps): import("react").JSX.Element;
 export interface SelectFieldProps {
     name: string;
     label?: ReactNode;
@@ -68,9 +75,13 @@ export interface SelectFieldProps {
     }[];
     defaultValue?: string;
     required?: boolean;
+    /** Optional leading icon, matching Field. */
+    icon?: ReactNode;
+    /** Extra class on the field wrapper — e.g. "kpa-col-full" to span a grid row. */
+    className?: string;
 }
 /** A labelled <select> styled to match Field — uncontrolled, read via FormData. */
-export declare function SelectField({ name, label, options, defaultValue, required }: SelectFieldProps): import("react").JSX.Element;
+export declare function SelectField({ name, label, options, defaultValue, required, icon, className }: SelectFieldProps): import("react").JSX.Element;
 export interface PasswordFieldProps {
     name?: string;
     label?: ReactNode;
@@ -108,9 +119,10 @@ export declare function Divider({ label }: {
     label?: string;
 }): import("react").JSX.Element;
 /** Wraps children in a <form> whose submit reads the fields and calls onValues. */
-export declare function AuthForm({ onSubmit, children }: {
+export declare function AuthForm({ onSubmit, children, className }: {
     onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void;
     children: ReactNode;
+    className?: string;
 }): import("react").JSX.Element;
 export declare const SpinnerIcon: ({ size }: IconProps) => import("react").JSX.Element;
 export declare const CheckCircleIcon: ({ size }: IconProps) => import("react").JSX.Element;

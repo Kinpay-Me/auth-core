@@ -5,7 +5,11 @@
  * here; app-specific extras (avatar upload, username/handle, payment methods)
  * stay in the consuming app.
  *
+ *   // Standalone auth-style card (default):
  *   <ProfileForm initial={user} onSubmit={(v) => api.patch("/users/me", v)} />
+ *
+ *   // Embedded in an app page — left-aligned, two-column, identity strip:
+ *   <ProfileForm layout="embedded" initial={user} onSubmit={…} />
  *
  * Uncontrolled (FormData) — email is display-only (it changes via verification,
  * not this endpoint) and is never submitted.
@@ -28,6 +32,15 @@ export interface ProfileFormProps {
     onSubmit: (values: ProfileValues) => void | Promise<void>;
     error?: string | null;
     pending?: boolean;
+    /**
+     * "auth" (default) renders the standalone centered card, matching the login /
+     * register screens. "embedded" renders a left-aligned, full-width block with an
+     * identity strip and a responsive two-column grid, for dropping into an app
+     * page — the same look in every app that hosts it.
+     */
+    layout?: "auth" | "embedded";
+    /** Optional avatar image for the embedded identity strip; falls back to initials. */
+    avatarUrl?: string | null;
     /** Options for the two selects — apps pass their supported sets. */
     languageOptions?: {
         value: string;
@@ -54,4 +67,4 @@ export interface ProfileFormProps {
         country: ReactNode;
     }>;
 }
-export declare function ProfileForm({ initial, onSubmit, error, pending, languageOptions, currencyOptions, brand, title, subtitle, theme, submitLabel, labels, }: ProfileFormProps): import("react").JSX.Element;
+export declare function ProfileForm({ initial, onSubmit, error, pending, layout, avatarUrl, languageOptions, currencyOptions, brand, title, subtitle, theme, submitLabel, labels, }: ProfileFormProps): import("react").JSX.Element;

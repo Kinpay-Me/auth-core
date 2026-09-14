@@ -170,6 +170,47 @@ var AUTH_CSS = `
 .kpa-status-msg strong { color: var(--kpa-fg); font-weight: 700; }
 .kpa-spin { animation: kpa-spin 0.8s linear infinite; }
 @keyframes kpa-spin { to { transform: rotate(360deg); } }
+
+/* \u2500\u2500 Embedded layout \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+   The in-app variant of the profile editor: not a centered auth card but a
+   left-aligned, full-width block the host drops into its own page/card. Same
+   fields, same field styling \u2014 a responsive two-column grid, light section
+   headers, an identity strip, and a right-aligned save button. */
+.kpa-root[data-kpa-embed] { max-width: 100%; }
+
+.kpa-id { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
+.kpa-id-avatar {
+  width: 3.5rem; height: 3.5rem; border-radius: 999px; flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--kpa-primary-from), var(--kpa-primary-to));
+  color: var(--kpa-primary-fg); font-weight: 800; font-size: 1.125rem; letter-spacing: 0.02em;
+}
+.kpa-id-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.kpa-id-name { font-size: 1.0625rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
+.kpa-id-email { font-size: 0.85rem; color: var(--kpa-muted-fg); }
+
+.kpa-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 1.25rem;
+  align-items: end;
+}
+.kpa-form-grid .kpa-col-full { grid-column: 1 / -1; }
+.kpa-section-label {
+  grid-column: 1 / -1;
+  font-size: 0.6875rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--kpa-muted-fg);
+  margin: 0.75rem 0 -0.25rem;
+}
+.kpa-section-label:first-child { margin-top: 0; }
+.kpa-form-foot { grid-column: 1 / -1; display: flex; justify-content: flex-end; margin-top: 0.75rem; }
+.kpa-form-foot .kpa-btn { width: auto; min-width: 12rem; padding: 0 2rem; }
+
+@media (max-width: 640px) {
+  .kpa-form-grid { grid-template-columns: 1fr; }
+  .kpa-form-foot { margin-top: 0.25rem; }
+  .kpa-form-foot .kpa-btn { width: 100%; }
+}
 `;
 function AuthStyles() {
   return createElement("style", { href: AUTH_STYLE_ID, precedence: "default", children: AUTH_CSS });
@@ -229,6 +270,34 @@ var EyeOffIcon = ({ size = 18 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { c
   /* @__PURE__ */ jsx("path", { d: "m2 2 20 20" })
 ] }));
 var CheckIcon = ({ size = 12 }) => svg(size, /* @__PURE__ */ jsx("path", { d: "M20 6 9 17l-5-5" }));
+var LanguagesIcon = ({ size = 18 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("path", { d: "m5 8 6 6" }),
+  /* @__PURE__ */ jsx("path", { d: "m4 14 6-6 2-3" }),
+  /* @__PURE__ */ jsx("path", { d: "M2 5h12" }),
+  /* @__PURE__ */ jsx("path", { d: "M7 2h1" }),
+  /* @__PURE__ */ jsx("path", { d: "m22 22-5-10-5 10" }),
+  /* @__PURE__ */ jsx("path", { d: "M14 18h6" })
+] }));
+var CoinIcon = ({ size = 18 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("circle", { cx: "12", cy: "12", r: "9" }),
+  /* @__PURE__ */ jsx("path", { d: "M12 7v10" }),
+  /* @__PURE__ */ jsx("path", { d: "M9.5 9.5h3.25a1.75 1.75 0 0 1 0 3.5H11a1.75 1.75 0 0 0 0 3.5h3.5" })
+] }));
+var CalendarIcon = ({ size = 18 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("rect", { x: "3", y: "4", width: "18", height: "18", rx: "2" }),
+  /* @__PURE__ */ jsx("path", { d: "M16 2v4" }),
+  /* @__PURE__ */ jsx("path", { d: "M8 2v4" }),
+  /* @__PURE__ */ jsx("path", { d: "M3 10h18" })
+] }));
+var MapPinIcon = ({ size = 18 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("path", { d: "M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" }),
+  /* @__PURE__ */ jsx("circle", { cx: "12", cy: "10", r: "3" })
+] }));
+var GlobeIcon = ({ size = 18 }) => svg(size, /* @__PURE__ */ jsxs(Fragment, { children: [
+  /* @__PURE__ */ jsx("circle", { cx: "12", cy: "12", r: "10" }),
+  /* @__PURE__ */ jsx("path", { d: "M2 12h20" }),
+  /* @__PURE__ */ jsx("path", { d: "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" })
+] }));
 function AuthCard({ brand, title, subtitle, theme, children, badges }) {
   return /* @__PURE__ */ jsxs("div", { className: "kpa-root", ...theme ? { "data-kpa-theme": theme } : {}, children: [
     /* @__PURE__ */ jsx(AuthStyles, {}),
@@ -244,8 +313,8 @@ function AuthCard({ brand, title, subtitle, theme, children, badges }) {
     ] }, b)) })
   ] });
 }
-function Field({ name, label, labelExtra, icon, type = "text", ...input }) {
-  return /* @__PURE__ */ jsxs("div", { className: "kpa-field", children: [
+function Field({ name, label, labelExtra, icon, type = "text", className, ...input }) {
+  return /* @__PURE__ */ jsxs("div", { className: className ? `kpa-field ${className}` : "kpa-field", children: [
     (label || labelExtra) && /* @__PURE__ */ jsxs("div", { className: "kpa-field-row", children: [
       label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
       labelExtra
@@ -266,10 +335,13 @@ function Field({ name, label, labelExtra, icon, type = "text", ...input }) {
     ] })
   ] });
 }
-function SelectField({ name, label, options, defaultValue, required }) {
-  return /* @__PURE__ */ jsxs("div", { className: "kpa-field", children: [
+function SelectField({ name, label, options, defaultValue, required, icon, className }) {
+  return /* @__PURE__ */ jsxs("div", { className: className ? `kpa-field ${className}` : "kpa-field", children: [
     label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
-    /* @__PURE__ */ jsx("div", { className: "kpa-input-wrap", children: /* @__PURE__ */ jsx("select", { id: name, name, className: "kpa-input", defaultValue, required, children: options.map((o) => /* @__PURE__ */ jsx("option", { value: o.value, children: o.label }, o.value)) }) })
+    /* @__PURE__ */ jsxs("div", { className: "kpa-input-wrap", children: [
+      icon && /* @__PURE__ */ jsx("span", { className: "kpa-input-icon", children: icon }),
+      /* @__PURE__ */ jsx("select", { id: name, name, className: "kpa-input", defaultValue, required, children: options.map((o) => /* @__PURE__ */ jsx("option", { value: o.value, children: o.label }, o.value)) })
+    ] })
   ] });
 }
 function PasswordField({
@@ -365,8 +437,8 @@ function Divider({ label = "or" }) {
     /* @__PURE__ */ jsx("div", { className: "kpa-divider-line" })
   ] });
 }
-function AuthForm({ onSubmit, children }) {
-  return /* @__PURE__ */ jsx("form", { className: "kpa-form", onSubmit: (e) => {
+function AuthForm({ onSubmit, children, className }) {
+  return /* @__PURE__ */ jsx("form", { className: className ? `kpa-form ${className}` : "kpa-form", onSubmit: (e) => {
     e.preventDefault();
     onSubmit(new FormData(e.currentTarget), e);
   }, children });
@@ -1038,11 +1110,18 @@ var DEFAULT_CURRENCIES = [
   { value: "ZMW", label: "ZMW \u2014 Zambian Kwacha" },
   { value: "USD", label: "USD \u2014 US Dollar" }
 ];
+function initials(name) {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "?";
+  return (parts[0][0] + (parts[1]?.[0] ?? "")).toUpperCase();
+}
 function ProfileForm({
   initial = {},
   onSubmit,
   error,
   pending,
+  layout = "auth",
+  avatarUrl,
   languageOptions = DEFAULT_LANGUAGES,
   currencyOptions = DEFAULT_CURRENCIES,
   brand,
@@ -1063,18 +1142,114 @@ function ProfileForm({
     country: "Country of residence",
     ...labels
   };
+  const toValues = (data) => ({
+    full_name: String(data.get("full_name") ?? "").trim(),
+    phone_number: String(data.get("phone_number") ?? "").trim(),
+    preferred_language: String(data.get("preferred_language") ?? ""),
+    preferred_currency: String(data.get("preferred_currency") ?? ""),
+    date_of_birth: String(data.get("date_of_birth") ?? ""),
+    street_address: String(data.get("street_address") ?? "").trim(),
+    country_of_residence: String(data.get("country_of_residence") ?? "").trim()
+  });
+  if (layout === "embedded") {
+    return /* @__PURE__ */ jsxs8("div", { className: "kpa-root", "data-kpa-embed": "", ...theme ? { "data-kpa-theme": theme } : {}, children: [
+      /* @__PURE__ */ jsx8(AuthStyles, {}),
+      /* @__PURE__ */ jsxs8("div", { className: "kpa-id", children: [
+        /* @__PURE__ */ jsx8("div", { className: "kpa-id-avatar", children: avatarUrl ? /* @__PURE__ */ jsx8("img", { src: avatarUrl, alt: "" }) : initials(initial.full_name) }),
+        /* @__PURE__ */ jsxs8("div", { className: "kpa-id-text", children: [
+          /* @__PURE__ */ jsx8("div", { className: "kpa-id-name", children: initial.full_name || "Your account" }),
+          initial.email != null && /* @__PURE__ */ jsx8("div", { className: "kpa-id-email", children: initial.email })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx8(FormError, { message: error }),
+      /* @__PURE__ */ jsxs8(AuthForm, { className: "kpa-form-grid", onSubmit: (data) => onSubmit(toValues(data)), children: [
+        /* @__PURE__ */ jsx8("div", { className: "kpa-section-label", children: "Identity" }),
+        /* @__PURE__ */ jsx8(
+          Field,
+          {
+            name: "full_name",
+            label: l.fullName,
+            icon: /* @__PURE__ */ jsx8(UserIcon, {}),
+            className: "kpa-col-full",
+            defaultValue: initial.full_name ?? "",
+            autoComplete: "name",
+            required: true
+          }
+        ),
+        /* @__PURE__ */ jsx8(
+          Field,
+          {
+            name: "phone_number",
+            label: l.phone,
+            icon: /* @__PURE__ */ jsx8(PhoneIcon, {}),
+            type: "tel",
+            inputMode: "tel",
+            defaultValue: initial.phone_number ?? "",
+            autoComplete: "tel"
+          }
+        ),
+        /* @__PURE__ */ jsx8(
+          Field,
+          {
+            name: "date_of_birth",
+            label: l.dob,
+            icon: /* @__PURE__ */ jsx8(CalendarIcon, {}),
+            type: "date",
+            defaultValue: initial.date_of_birth ?? ""
+          }
+        ),
+        /* @__PURE__ */ jsx8("div", { className: "kpa-section-label", children: "Preferences" }),
+        /* @__PURE__ */ jsx8(
+          SelectField,
+          {
+            name: "preferred_language",
+            label: l.language,
+            icon: /* @__PURE__ */ jsx8(LanguagesIcon, {}),
+            options: languageOptions,
+            defaultValue: initial.preferred_language
+          }
+        ),
+        /* @__PURE__ */ jsx8(
+          SelectField,
+          {
+            name: "preferred_currency",
+            label: l.currency,
+            icon: /* @__PURE__ */ jsx8(CoinIcon, {}),
+            options: currencyOptions,
+            defaultValue: initial.preferred_currency
+          }
+        ),
+        /* @__PURE__ */ jsx8("div", { className: "kpa-section-label", children: "Location" }),
+        /* @__PURE__ */ jsx8(
+          Field,
+          {
+            name: "street_address",
+            label: l.address,
+            icon: /* @__PURE__ */ jsx8(MapPinIcon, {}),
+            className: "kpa-col-full",
+            defaultValue: initial.street_address ?? "",
+            autoComplete: "street-address"
+          }
+        ),
+        /* @__PURE__ */ jsx8(
+          Field,
+          {
+            name: "country_of_residence",
+            label: l.country,
+            icon: /* @__PURE__ */ jsx8(GlobeIcon, {}),
+            className: "kpa-col-full",
+            defaultValue: initial.country_of_residence ?? "",
+            autoComplete: "country-name"
+          }
+        ),
+        /* @__PURE__ */ jsx8("div", { className: "kpa-form-foot", children: /* @__PURE__ */ jsx8(SubmitButton, { pending, pendingLabel: "Saving\u2026", children: submitLabel }) })
+      ] })
+    ] });
+  }
   return /* @__PURE__ */ jsxs8(AuthCard, { brand, title, subtitle, theme, children: [
     /* @__PURE__ */ jsx8(AuthStyles, {}),
     /* @__PURE__ */ jsx8(FormError, { message: error }),
-    /* @__PURE__ */ jsxs8(AuthForm, { onSubmit: (data) => onSubmit({
-      full_name: String(data.get("full_name") ?? "").trim(),
-      phone_number: String(data.get("phone_number") ?? "").trim(),
-      preferred_language: String(data.get("preferred_language") ?? ""),
-      preferred_currency: String(data.get("preferred_currency") ?? ""),
-      date_of_birth: String(data.get("date_of_birth") ?? ""),
-      street_address: String(data.get("street_address") ?? "").trim(),
-      country_of_residence: String(data.get("country_of_residence") ?? "").trim()
-    }), children: [
+    /* @__PURE__ */ jsxs8(AuthForm, { onSubmit: (data) => onSubmit(toValues(data)), children: [
       /* @__PURE__ */ jsx8(
         Field,
         {

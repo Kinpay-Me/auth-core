@@ -56,6 +56,11 @@ export const UserIcon = ({ size = 18 }: IconProps) => svg(size, <><path d="M19 2
 export const EyeIcon = ({ size = 18 }: IconProps) => svg(size, <><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></>);
 export const EyeOffIcon = ({ size = 18 }: IconProps) => svg(size, <><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.53 13.53 0 0 0 2 11s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><path d="m2 2 20 20" /></>);
 export const CheckIcon = ({ size = 12 }: IconProps) => svg(size, <path d="M20 6 9 17l-5-5" />);
+export const LanguagesIcon = ({ size = 18 }: IconProps) => svg(size, <><path d="m5 8 6 6" /><path d="m4 14 6-6 2-3" /><path d="M2 5h12" /><path d="M7 2h1" /><path d="m22 22-5-10-5 10" /><path d="M14 18h6" /></>);
+export const CoinIcon = ({ size = 18 }: IconProps) => svg(size, <><circle cx="12" cy="12" r="9" /><path d="M12 7v10" /><path d="M9.5 9.5h3.25a1.75 1.75 0 0 1 0 3.5H11a1.75 1.75 0 0 0 0 3.5h3.5" /></>);
+export const CalendarIcon = ({ size = 18 }: IconProps) => svg(size, <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4" /><path d="M8 2v4" /><path d="M3 10h18" /></>);
+export const MapPinIcon = ({ size = 18 }: IconProps) => svg(size, <><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></>);
+export const GlobeIcon = ({ size = 18 }: IconProps) => svg(size, <><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" /></>);
 
 /* ── Card shell ──────────────────────────────────────────────────────────── */
 export interface AuthCardProps {
@@ -110,11 +115,13 @@ export interface FieldProps {
   readOnly?: boolean;
   minLength?: number;
   inputMode?: "text" | "numeric" | "tel" | "email";
+  /** Extra class on the field wrapper — e.g. "kpa-col-full" to span a grid row. */
+  className?: string;
 }
 
-export function Field({ name, label, labelExtra, icon, type = "text", ...input }: FieldProps) {
+export function Field({ name, label, labelExtra, icon, type = "text", className, ...input }: FieldProps) {
   return (
-    <div className="kpa-field">
+    <div className={className ? `kpa-field ${className}` : "kpa-field"}>
       {(label || labelExtra) && (
         <div className="kpa-field-row">
           {label && <label htmlFor={name} className="kpa-label">{label}</label>}
@@ -136,14 +143,19 @@ export interface SelectFieldProps {
   options: { value: string; label: string }[];
   defaultValue?: string;
   required?: boolean;
+  /** Optional leading icon, matching Field. */
+  icon?: ReactNode;
+  /** Extra class on the field wrapper — e.g. "kpa-col-full" to span a grid row. */
+  className?: string;
 }
 
 /** A labelled <select> styled to match Field — uncontrolled, read via FormData. */
-export function SelectField({ name, label, options, defaultValue, required }: SelectFieldProps) {
+export function SelectField({ name, label, options, defaultValue, required, icon, className }: SelectFieldProps) {
   return (
-    <div className="kpa-field">
+    <div className={className ? `kpa-field ${className}` : "kpa-field"}>
       {label && <label htmlFor={name} className="kpa-label">{label}</label>}
       <div className="kpa-input-wrap">
+        {icon && <span className="kpa-input-icon">{icon}</span>}
         <select id={name} name={name} className="kpa-input" defaultValue={defaultValue} required={required}>
           {options.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -262,9 +274,9 @@ export function Divider({ label = "or" }: { label?: string }) {
 }
 
 /** Wraps children in a <form> whose submit reads the fields and calls onValues. */
-export function AuthForm({ onSubmit, children }: { onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void; children: ReactNode }) {
+export function AuthForm({ onSubmit, children, className }: { onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void; children: ReactNode; className?: string }) {
   return (
-    <form className="kpa-form" onSubmit={(e) => { e.preventDefault(); onSubmit(new FormData(e.currentTarget), e); }}>
+    <form className={className ? `kpa-form ${className}` : "kpa-form"} onSubmit={(e) => { e.preventDefault(); onSubmit(new FormData(e.currentTarget), e); }}>
       {children}
     </form>
   );

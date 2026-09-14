@@ -171,6 +171,47 @@ export const AUTH_CSS = `
 .kpa-status-msg strong { color: var(--kpa-fg); font-weight: 700; }
 .kpa-spin { animation: kpa-spin 0.8s linear infinite; }
 @keyframes kpa-spin { to { transform: rotate(360deg); } }
+
+/* ── Embedded layout ──────────────────────────────────────────────────────────
+   The in-app variant of the profile editor: not a centered auth card but a
+   left-aligned, full-width block the host drops into its own page/card. Same
+   fields, same field styling — a responsive two-column grid, light section
+   headers, an identity strip, and a right-aligned save button. */
+.kpa-root[data-kpa-embed] { max-width: 100%; }
+
+.kpa-id { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
+.kpa-id-avatar {
+  width: 3.5rem; height: 3.5rem; border-radius: 999px; flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--kpa-primary-from), var(--kpa-primary-to));
+  color: var(--kpa-primary-fg); font-weight: 800; font-size: 1.125rem; letter-spacing: 0.02em;
+}
+.kpa-id-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.kpa-id-name { font-size: 1.0625rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
+.kpa-id-email { font-size: 0.85rem; color: var(--kpa-muted-fg); }
+
+.kpa-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 1.25rem;
+  align-items: end;
+}
+.kpa-form-grid .kpa-col-full { grid-column: 1 / -1; }
+.kpa-section-label {
+  grid-column: 1 / -1;
+  font-size: 0.6875rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--kpa-muted-fg);
+  margin: 0.75rem 0 -0.25rem;
+}
+.kpa-section-label:first-child { margin-top: 0; }
+.kpa-form-foot { grid-column: 1 / -1; display: flex; justify-content: flex-end; margin-top: 0.75rem; }
+.kpa-form-foot .kpa-btn { width: auto; min-width: 12rem; padding: 0 2rem; }
+
+@media (max-width: 640px) {
+  .kpa-form-grid { grid-template-columns: 1fr; }
+  .kpa-form-foot { margin-top: 0.25rem; }
+  .kpa-form-foot .kpa-btn { width: 100%; }
+}
 `;
 
 /**

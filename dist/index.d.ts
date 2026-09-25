@@ -8,3 +8,4 @@ export { ApiError, type ApiResponse, type AuthSession, type PreviousSession, typ
 export { createCookieSessionStore, type CookieSessionStoreOptions, } from "./session-store";
 export { createApiClient, type ApiClient, type ApiClientOptions, type ApiTokenStore, type RequestOptions, } from "./api-client";
 export { safeRedirect, type SafeRedirectOptions } from "./redirect";
+export { isAccountVerified, isVerificationKnown, needsVerification, type VerificationFlags, } from "./verification";

@@ -213,9 +213,31 @@ function safeRedirect(raw, opts = {}) {
     return fallback;
   }
 }
+
+// src/verification.ts
+function emailVerified(u) {
+  return u.email_verified ?? u.emailVerified;
+}
+function phoneVerified(u) {
+  return u.phone_verified ?? u.phoneVerified;
+}
+function isAccountVerified(user) {
+  if (!user) return false;
+  return Boolean(emailVerified(user) || phoneVerified(user));
+}
+function isVerificationKnown(user) {
+  if (!user) return false;
+  return emailVerified(user) !== void 0 || phoneVerified(user) !== void 0;
+}
+function needsVerification(user) {
+  return isVerificationKnown(user) && !isAccountVerified(user);
+}
 export {
   ApiError,
   createApiClient,
   createCookieSessionStore,
+  isAccountVerified,
+  isVerificationKnown,
+  needsVerification,
   safeRedirect
 };

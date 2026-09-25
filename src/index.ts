@@ -26,3 +26,10 @@ export {
 } from "./api-client";
 
 export { safeRedirect, type SafeRedirectOptions } from "./redirect";
+
+export {
+  isAccountVerified,
+  isVerificationKnown,
+  needsVerification,
+  type VerificationFlags,
+} from "./verification";

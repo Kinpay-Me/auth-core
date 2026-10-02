@@ -500,6 +500,14 @@ function Login({
   badges,
   identifierLabel = "Phone number or Email",
   identifierPlaceholder = "e.g. +47 900 00 000",
+  passwordLabel = "Password",
+  forgotPasswordLabel = "Forgot password?",
+  staySignedInLabel = "Stay signed in for 30 days",
+  submitLabel = "Sign In",
+  submitPendingLabel = "Signing in\u2026",
+  registerPrompt = "New to KinPay?",
+  registerLabel = "Create an Account",
+  magicLinkLabel = "Email me a sign-in link",
   registerHref,
   forgotPasswordHref,
   magicLinkHref,
@@ -528,17 +536,17 @@ function Login({
       /* @__PURE__ */ jsx2(
         PasswordField,
         {
-          label: "Password",
-          labelExtra: forgotPasswordHref ? /* @__PURE__ */ jsx2(AuthLink, { href: forgotPasswordHref, className: "kpa-link kpa-link-sm", LinkComponent, children: "Forgot password?" }) : void 0
+          label: passwordLabel,
+          labelExtra: forgotPasswordHref ? /* @__PURE__ */ jsx2(AuthLink, { href: forgotPasswordHref, className: "kpa-link kpa-link-sm", LinkComponent, children: forgotPasswordLabel }) : void 0
         }
       ),
-      showStaySignedIn && /* @__PURE__ */ jsx2(Checkbox, { checked: staySignedIn, onChange: setStaySignedIn, children: "Stay signed in for 30 days" }),
-      /* @__PURE__ */ jsx2(SubmitButton, { pending, pendingLabel: "Signing in\u2026", children: "Sign In" })
+      showStaySignedIn && /* @__PURE__ */ jsx2(Checkbox, { checked: staySignedIn, onChange: setStaySignedIn, children: staySignedInLabel }),
+      /* @__PURE__ */ jsx2(SubmitButton, { pending, pendingLabel: submitPendingLabel, children: submitLabel })
     ] }),
     registerHref && /* @__PURE__ */ jsxs2("div", { className: "kpa-foot", children: [
-      "New to KinPay?",
+      registerPrompt,
       " ",
-      /* @__PURE__ */ jsx2(AuthLink, { href: registerHref, className: "kpa-link", LinkComponent, children: "Create an Account" })
+      /* @__PURE__ */ jsx2(AuthLink, { href: registerHref, className: "kpa-link", LinkComponent, children: registerLabel })
     ] }),
     magicLinkHref && /* @__PURE__ */ jsxs2(Fragment2, { children: [
       /* @__PURE__ */ jsx2(Divider, {}),
@@ -547,11 +555,11 @@ function Login({
         {
           href: magicLinkHref,
           className: "kpa-btn kpa-btn-secondary",
-          "aria-label": "Email me a sign-in link",
+          "aria-label": typeof magicLinkLabel === "string" ? magicLinkLabel : "Email me a sign-in link",
           LinkComponent,
           children: [
             /* @__PURE__ */ jsx2(MailIcon, { size: 16 }),
-            "Email me a sign-in link"
+            magicLinkLabel
           ]
         }
       ) })

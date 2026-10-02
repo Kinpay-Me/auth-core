@@ -32,6 +32,17 @@ export interface LoginProps {
   identifierLabel?: ReactNode;
   identifierPlaceholder?: string;
 
+  /** Copy overrides — default to English so existing callers are unaffected.
+   * A localized app passes its translated strings (e.g. Circles in Kiswahili). */
+  passwordLabel?: ReactNode;
+  forgotPasswordLabel?: ReactNode;
+  staySignedInLabel?: ReactNode;
+  submitLabel?: ReactNode;
+  submitPendingLabel?: string;
+  registerPrompt?: ReactNode;
+  registerLabel?: ReactNode;
+  magicLinkLabel?: ReactNode;
+
   /** Shown only if provided. */
   registerHref?: string;
   forgotPasswordHref?: string;
@@ -48,6 +59,14 @@ export function Login({
   theme, badges,
   identifierLabel = "Phone number or Email",
   identifierPlaceholder = "e.g. +47 900 00 000",
+  passwordLabel = "Password",
+  forgotPasswordLabel = "Forgot password?",
+  staySignedInLabel = "Stay signed in for 30 days",
+  submitLabel = "Sign In",
+  submitPendingLabel = "Signing in…",
+  registerPrompt = "New to KinPay?",
+  registerLabel = "Create an Account",
+  magicLinkLabel = "Email me a sign-in link",
   registerHref, forgotPasswordHref, magicLinkHref,
   showStaySignedIn = true,
   LinkComponent,
@@ -73,28 +92,28 @@ export function Login({
         />
 
         <PasswordField
-          label="Password"
+          label={passwordLabel}
           labelExtra={forgotPasswordHref ? (
             <AuthLink href={forgotPasswordHref} className="kpa-link kpa-link-sm" LinkComponent={LinkComponent}>
-              Forgot password?
+              {forgotPasswordLabel}
             </AuthLink>
           ) : undefined}
         />
 
         {showStaySignedIn && (
           <Checkbox checked={staySignedIn} onChange={setStaySignedIn}>
-            Stay signed in for 30 days
+            {staySignedInLabel}
           </Checkbox>
         )}
 
-        <SubmitButton pending={pending} pendingLabel="Signing in…">Sign In</SubmitButton>
+        <SubmitButton pending={pending} pendingLabel={submitPendingLabel}>{submitLabel}</SubmitButton>
       </AuthForm>
 
       {registerHref && (
         <div className="kpa-foot">
-          New to KinPay?{" "}
+          {registerPrompt}{" "}
           <AuthLink href={registerHref} className="kpa-link" LinkComponent={LinkComponent}>
-            Create an Account
+            {registerLabel}
           </AuthLink>
         </div>
       )}
@@ -106,11 +125,11 @@ export function Login({
             <AuthLink
               href={magicLinkHref}
               className="kpa-btn kpa-btn-secondary"
-              aria-label="Email me a sign-in link"
+              aria-label={typeof magicLinkLabel === "string" ? magicLinkLabel : "Email me a sign-in link"}
               LinkComponent={LinkComponent}
             >
               <MailIcon size={16} />
-              Email me a sign-in link
+              {magicLinkLabel}
             </AuthLink>
           </div>
         </>

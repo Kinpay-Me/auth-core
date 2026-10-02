@@ -24,6 +24,16 @@ export interface LoginProps {
     badges?: string[];
     identifierLabel?: ReactNode;
     identifierPlaceholder?: string;
+    /** Copy overrides — default to English so existing callers are unaffected.
+     * A localized app passes its translated strings (e.g. Circles in Kiswahili). */
+    passwordLabel?: ReactNode;
+    forgotPasswordLabel?: ReactNode;
+    staySignedInLabel?: ReactNode;
+    submitLabel?: ReactNode;
+    submitPendingLabel?: string;
+    registerPrompt?: ReactNode;
+    registerLabel?: ReactNode;
+    magicLinkLabel?: ReactNode;
     /** Shown only if provided. */
     registerHref?: string;
     forgotPasswordHref?: string;
@@ -31,4 +41,4 @@ export interface LoginProps {
     showStaySignedIn?: boolean;
     LinkComponent?: LinkLike;
 }
-export declare function Login({ onSubmit, error, pending, brand, title, subtitle, theme, badges, identifierLabel, identifierPlaceholder, registerHref, forgotPasswordHref, magicLinkHref, showStaySignedIn, LinkComponent, }: LoginProps): import("react").JSX.Element;
+export declare function Login({ onSubmit, error, pending, brand, title, subtitle, theme, badges, identifierLabel, identifierPlaceholder, passwordLabel, forgotPasswordLabel, staySignedInLabel, submitLabel, submitPendingLabel, registerPrompt, registerLabel, magicLinkLabel, registerHref, forgotPasswordHref, magicLinkHref, showStaySignedIn, LinkComponent, }: LoginProps): import("react").JSX.Element;

@@ -87,7 +87,9 @@ export const AUTH_CSS = `
   width: 100%; height: 3rem; padding: 0 0.875rem 0 2.5rem;
   background: var(--kpa-field-bg); color: var(--kpa-fg);
   border: 1px solid var(--kpa-border); border-radius: var(--kpa-radius);
-  font-size: 0.9375rem; font-family: inherit; outline: none;
+  /* 1rem (16px), not 0.9375rem — iOS Safari auto-zooms the page when a focused
+     input is under 16px, which shoved the auth screens around on phones (J8b). */
+  font-size: 1rem; font-family: inherit; outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .kpa-input::placeholder { color: var(--kpa-muted-fg); opacity: 0.7; }

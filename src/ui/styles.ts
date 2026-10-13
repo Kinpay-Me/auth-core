@@ -94,6 +94,16 @@ export const AUTH_CSS = `
 }
 .kpa-input::placeholder { color: var(--kpa-muted-fg); opacity: 0.7; }
 .kpa-input:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
+/* Select: drop the OS chevron for a custom one, so it reads like the text fields. */
+.kpa-select {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  padding-right: 2.5rem; cursor: pointer;
+}
+.kpa-select::-ms-expand { display: none; }
+.kpa-select-chevron {
+  position: absolute; right: 0.875rem; display: flex;
+  color: var(--kpa-muted-fg); pointer-events: none;
+}
 .kpa-input-btn {
   position: absolute; right: 0.5rem; background: none; border: none; cursor: pointer;
   color: var(--kpa-muted-fg); padding: 0.5rem; display: flex; border-radius: 8px;

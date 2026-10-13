@@ -156,11 +156,17 @@ export function SelectField({ name, label, options, defaultValue, required, icon
       {label && <label htmlFor={name} className="kpa-label">{label}</label>}
       <div className="kpa-input-wrap">
         {icon && <span className="kpa-input-icon">{icon}</span>}
-        <select id={name} name={name} className="kpa-input" defaultValue={defaultValue} required={required}>
+        <select id={name} name={name} className="kpa-input kpa-select" defaultValue={defaultValue} required={required}>
           {options.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
+        {/* Custom chevron — the native one looks unstyled next to the text fields. */}
+        <span className="kpa-select-chevron" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
       </div>
     </div>
   );

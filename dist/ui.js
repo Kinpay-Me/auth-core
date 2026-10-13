@@ -93,6 +93,16 @@ var AUTH_CSS = `
 }
 .kpa-input::placeholder { color: var(--kpa-muted-fg); opacity: 0.7; }
 .kpa-input:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
+/* Select: drop the OS chevron for a custom one, so it reads like the text fields. */
+.kpa-select {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  padding-right: 2.5rem; cursor: pointer;
+}
+.kpa-select::-ms-expand { display: none; }
+.kpa-select-chevron {
+  position: absolute; right: 0.875rem; display: flex;
+  color: var(--kpa-muted-fg); pointer-events: none;
+}
 .kpa-input-btn {
   position: absolute; right: 0.5rem; background: none; border: none; cursor: pointer;
   color: var(--kpa-muted-fg); padding: 0.5rem; display: flex; border-radius: 8px;
@@ -342,7 +352,8 @@ function SelectField({ name, label, options, defaultValue, required, icon, class
     label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
     /* @__PURE__ */ jsxs("div", { className: "kpa-input-wrap", children: [
       icon && /* @__PURE__ */ jsx("span", { className: "kpa-input-icon", children: icon }),
-      /* @__PURE__ */ jsx("select", { id: name, name, className: "kpa-input", defaultValue, required, children: options.map((o) => /* @__PURE__ */ jsx("option", { value: o.value, children: o.label }, o.value)) })
+      /* @__PURE__ */ jsx("select", { id: name, name, className: "kpa-input kpa-select", defaultValue, required, children: options.map((o) => /* @__PURE__ */ jsx("option", { value: o.value, children: o.label }, o.value)) }),
+      /* @__PURE__ */ jsx("span", { className: "kpa-select-chevron", "aria-hidden": "true", children: /* @__PURE__ */ jsx("svg", { width: "16", height: "16", viewBox: "0 0 16 16", fill: "none", children: /* @__PURE__ */ jsx("path", { d: "M4 6l4 4 4-4", stroke: "currentColor", strokeWidth: "1.6", strokeLinecap: "round", strokeLinejoin: "round" }) }) })
     ] })
   ] });
 }

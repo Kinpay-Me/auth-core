@@ -118,7 +118,12 @@ export declare function FormError({ message }: {
 export declare function Divider({ label }: {
     label?: string;
 }): import("react").JSX.Element;
-/** Wraps children in a <form> whose submit reads the fields and calls onValues. */
+/**
+ * Wraps children in a <form> whose submit reads the fields and calls onValues.
+ * `method="post"`: if the page is submitted before React has hydrated (slow JS, a script error), the
+ * browser sends the form natively; the default GET would put every field, the password included, in
+ * the address bar, history and server logs. POST keeps them in the body; the app's route can answer it.
+ */
 export declare function AuthForm({ onSubmit, children, className }: {
     onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void;
     children: ReactNode;

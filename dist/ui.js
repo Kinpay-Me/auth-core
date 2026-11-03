@@ -451,7 +451,7 @@ function Divider({ label = "or" }) {
   ] });
 }
 function AuthForm({ onSubmit, children, className }) {
-  return /* @__PURE__ */ jsx("form", { className: className ? `kpa-form ${className}` : "kpa-form", onSubmit: (e) => {
+  return /* @__PURE__ */ jsx("form", { method: "post", className: className ? `kpa-form ${className}` : "kpa-form", onSubmit: (e) => {
     e.preventDefault();
     onSubmit(new FormData(e.currentTarget), e);
   }, children });

@@ -279,10 +279,15 @@ export function Divider({ label = "or" }: { label?: string }) {
   );
 }
 
-/** Wraps children in a <form> whose submit reads the fields and calls onValues. */
+/**
+ * Wraps children in a <form> whose submit reads the fields and calls onValues.
+ * `method="post"`: if the page is submitted before React has hydrated (slow JS, a script error), the
+ * browser sends the form natively; the default GET would put every field, the password included, in
+ * the address bar, history and server logs. POST keeps them in the body; the app's route can answer it.
+ */
 export function AuthForm({ onSubmit, children, className }: { onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void; children: ReactNode; className?: string }) {
   return (
-    <form className={className ? `kpa-form ${className}` : "kpa-form"} onSubmit={(e) => { e.preventDefault(); onSubmit(new FormData(e.currentTarget), e); }}>
+    <form method="post" className={className ? `kpa-form ${className}` : "kpa-form"} onSubmit={(e) => { e.preventDefault(); onSubmit(new FormData(e.currentTarget), e); }}>
       {children}
     </form>
   );

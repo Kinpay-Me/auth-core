@@ -44,9 +44,22 @@ export interface RegisterProps {
     /** Prefill + lock (invite flows). */
     defaults?: Partial<RegisterValues>;
     emailLocked?: boolean;
+    /**
+     * Replace the plain phone text input with the app's own phone control (e.g. a
+     * country picker + dial-code prefix). Rendered inside the labelled field; it
+     * MUST submit its value under `name` (a hidden input is fine).
+     */
+    renderPhoneInput?: (props: {
+        name: "phone";
+        id: string;
+        defaultValue: string;
+        required: boolean;
+    }) => ReactNode;
+    /** Inline message under the phone field (e.g. live format validation). */
+    phoneError?: ReactNode;
     loginHref?: string;
     labels?: Partial<typeof DEFAULT_LABELS>;
     LinkComponent?: LinkLike;
 }
-export declare function Register({ onSubmit, error, pending, brand, theme, badges, notice, whatsappEnabled, defaults, emailLocked, loginHref, labels, LinkComponent, }: RegisterProps): import("react").JSX.Element;
+export declare function Register({ onSubmit, error, pending, brand, theme, badges, notice, whatsappEnabled, defaults, emailLocked, loginHref, labels, LinkComponent, renderPhoneInput, phoneError, }: RegisterProps): import("react").JSX.Element;
 export {};

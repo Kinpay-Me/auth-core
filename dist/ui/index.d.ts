@@ -12,5 +12,5 @@ export { MagicLinkCallback, type MagicLinkCallbackProps } from "./MagicLinkCallb
 export { Claim, type ClaimProps, type ClaimValues } from "./Claim";
 export { ForgotPassword, type ForgotPasswordProps } from "./ForgotPassword";
 export { ProfileForm, type ProfileFormProps, type ProfileValues } from "./ProfileForm";
-export { AuthCard, type AuthCardProps, AuthForm, Field, type FieldProps, SelectField, type SelectFieldProps, PasswordField, type PasswordFieldProps, PasswordStrengthMeter, Checkbox, OtpField, type OtpFieldProps, StatusScreen, type StatusScreenProps, SubmitButton, FormError, Divider, AuthLink, type LinkLike, type NavProps, MailIcon, LockIcon, PhoneIcon, UserIcon, EyeIcon, EyeOffIcon, CheckIcon, SpinnerIcon, CheckCircleIcon, XCircleIcon, } from "./primitives";
+export { AuthCard, type AuthCardProps, AuthForm, Field, type FieldProps, SelectField, type SelectFieldProps, PasswordField, type PasswordFieldProps, PasswordStrengthMeter, PASSWORD_RULES, type PasswordRuleId, Checkbox, OtpField, type OtpFieldProps, StatusScreen, type StatusScreenProps, SubmitButton, FormError, Divider, AuthLink, type LinkLike, type NavProps, MailIcon, LockIcon, PhoneIcon, UserIcon, EyeIcon, EyeOffIcon, CheckIcon, SpinnerIcon, CheckCircleIcon, XCircleIcon, } from "./primitives";
 export { AUTH_CSS, AUTH_STYLE_ID, AuthStyles } from "./styles";

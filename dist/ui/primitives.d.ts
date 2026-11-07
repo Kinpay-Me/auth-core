@@ -94,10 +94,25 @@ export interface PasswordFieldProps {
     /** Controlled value — pass with `onValueChange` (needed for the strength meter). */
     value?: string;
     onValueChange?: (value: string) => void;
-    /** Show a strength meter under the field (uses the controlled `value`). */
+    /**
+     * Show a strength meter plus a live checklist of the password rules under the
+     * field (uses the controlled `value`). Also replaces the browser's generic
+     * "Please match the format requested." with a message naming the failed rule.
+     */
     strength?: boolean;
+    /** Override the rule labels / validity messages (i18n). */
+    ruleLabels?: Partial<Record<PasswordRuleId, string>>;
+    /** Prefix for the custom validity message, e.g. "Password needs". */
+    ruleMessagePrefix?: string;
 }
-export declare function PasswordField({ name, label, labelExtra, autoComplete, required, placeholder, minLength, pattern, value, onValueChange, strength, }: PasswordFieldProps): import("react").JSX.Element;
+export type PasswordRuleId = "length" | "upper" | "lower" | "number" | "symbol";
+/** The rules new passwords must satisfy — mirrors the screens' PASSWORD_PATTERN. */
+export declare const PASSWORD_RULES: {
+    id: PasswordRuleId;
+    label: string;
+    test: (p: string) => boolean;
+}[];
+export declare function PasswordField({ name, label, labelExtra, autoComplete, required, placeholder, minLength, pattern, value, onValueChange, strength, ruleLabels, ruleMessagePrefix, }: PasswordFieldProps): import("react").JSX.Element;
 /** 0–4 strength from length + character-class variety. Presentation only. */
 export declare function PasswordStrengthMeter({ password }: {
     password: string;

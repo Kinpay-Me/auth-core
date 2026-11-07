@@ -6,6 +6,8 @@
  */
 import {
   createElement,
+  useEffect,
+  useRef,
   useState,
   type ComponentType,
   type ReactNode,
@@ -184,16 +186,51 @@ export interface PasswordFieldProps {
   /** Controlled value — pass with `onValueChange` (needed for the strength meter). */
   value?: string;
   onValueChange?: (value: string) => void;
-  /** Show a strength meter under the field (uses the controlled `value`). */
+  /**
+   * Show a strength meter plus a live checklist of the password rules under the
+   * field (uses the controlled `value`). Also replaces the browser's generic
+   * "Please match the format requested." with a message naming the failed rule.
+   */
   strength?: boolean;
+  /** Override the rule labels / validity messages (i18n). */
+  ruleLabels?: Partial<Record<PasswordRuleId, string>>;
+  /** Prefix for the custom validity message, e.g. "Password needs". */
+  ruleMessagePrefix?: string;
 }
+
+export type PasswordRuleId = "length" | "upper" | "lower" | "number" | "symbol";
+
+/** The rules new passwords must satisfy — mirrors the screens' PASSWORD_PATTERN. */
+export const PASSWORD_RULES: { id: PasswordRuleId; label: string; test: (p: string) => boolean }[] = [
+  { id: "length", label: "At least 8 characters", test: (p) => p.length >= 8 },
+  { id: "upper",  label: "One uppercase letter",  test: (p) => /[A-Z]/.test(p) },
+  { id: "lower",  label: "One lowercase letter",  test: (p) => /[a-z]/.test(p) },
+  { id: "number", label: "One number",            test: (p) => /\d/.test(p) },
+  { id: "symbol", label: "One symbol",            test: (p) => /[^a-zA-Z\d]/.test(p) },
+];
 
 export function PasswordField({
   name = "password", label, labelExtra, autoComplete = "current-password",
   required = true, placeholder = "••••••••", minLength, pattern, value, onValueChange, strength,
+  ruleLabels, ruleMessagePrefix = "Password needs",
 }: PasswordFieldProps) {
   const [show, setShow] = useState(false);
+  const [attempted, setAttempted] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const controlled = value !== undefined && onValueChange !== undefined;
+  const pw = value ?? "";
+  const rules = PASSWORD_RULES.map((r) => ({ ...r, label: ruleLabels?.[r.id] ?? r.label, met: r.test(pw) }));
+  const firstUnmet = strength ? rules.find((r) => !r.met) : undefined;
+
+  // Name the failing rule instead of the browser's generic pattern message.
+  // Empty + required is left to the browser's own "Please fill out this field".
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el || !strength) return;
+    el.setCustomValidity(pw && firstUnmet ? `${ruleMessagePrefix}: ${firstUnmet.label.toLowerCase()}.` : "");
+  }, [strength, pw, firstUnmet, ruleMessagePrefix]);
+
+  const hintId = `${name}-rules`;
   return (
     <div className="kpa-field">
       {(label || labelExtra) && (
@@ -204,16 +241,31 @@ export function PasswordField({
       )}
       <div className="kpa-input-wrap">
         <span className="kpa-input-icon"><LockIcon /></span>
-        <input id={name} name={name} type={show ? "text" : "password"} className="kpa-input"
+        <input ref={inputRef} id={name} name={name} type={show ? "text" : "password"} className="kpa-input"
           autoComplete={autoComplete} required={required} placeholder={placeholder}
           minLength={minLength} pattern={pattern}
+          aria-describedby={strength ? hintId : undefined}
+          aria-invalid={strength && attempted && !!firstUnmet ? true : undefined}
+          onInvalid={() => setAttempted(true)}
           {...(controlled ? { value, onChange: (e) => onValueChange!(e.target.value) } : {})} />
         <button type="button" className="kpa-input-btn" onClick={() => setShow((s) => !s)}
           aria-label={show ? "Hide password" : "Show password"}>
           {show ? <EyeOffIcon /> : <EyeIcon />}
         </button>
       </div>
-      {strength && <PasswordStrengthMeter password={value ?? ""} />}
+      {strength && <PasswordStrengthMeter password={pw} />}
+      {strength && (
+        <ul id={hintId} className="kpa-rules" aria-live="polite">
+          {rules.map((r) => (
+            <li key={r.id} className="kpa-rule"
+              data-state={r.met ? "met" : attempted ? "error" : "pending"}>
+              <span className="kpa-rule-icon" aria-hidden>{r.met ? <CheckIcon /> : null}</span>
+              {r.label}
+              <span className="kpa-sr-only">{r.met ? " (done)" : " (required)"}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -229,12 +281,7 @@ const STRENGTH = [
 /** 0–4 strength from length + character-class variety. Presentation only. */
 export function PasswordStrengthMeter({ password }: { password: string }) {
   if (!password) return null;
-  let met = 0;
-  if (password.length >= 8) met++;
-  if (/[a-z]/.test(password)) met++;
-  if (/[A-Z]/.test(password)) met++;
-  if (/\d/.test(password)) met++;
-  if (/[^a-zA-Z\d]/.test(password)) met++;
+  const met = PASSWORD_RULES.filter((r) => r.test(password)).length;
   const score = Math.max(0, met - 1); // 0..4
   const { label, color } = STRENGTH[score];
   return (

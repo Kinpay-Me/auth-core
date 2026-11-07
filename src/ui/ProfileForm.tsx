@@ -48,6 +48,17 @@ export interface ProfileFormProps {
   /** Optional avatar image for the embedded identity strip; falls back to initials. */
   avatarUrl?: string | null;
 
+  /**
+   * Replace the plain phone text input with the app's own phone control (e.g. a
+   * country picker + dial-code prefix). It is rendered inside the labelled field
+   * and MUST submit its value under `name` (a hidden input is fine) so FormData
+   * picks it up. Use it to enforce the international format while the user types.
+   */
+  renderPhoneInput?: (props: { name: "phone_number"; id: string; defaultValue: string }) => ReactNode;
+
+  /** Inline message under the phone field (e.g. live format validation). */
+  phoneError?: ReactNode;
+
   /** Options for the two selects — apps pass their supported sets. */
   languageOptions?: { value: string; label: string }[];
   currencyOptions?: { value: string; label: string }[];
@@ -84,6 +95,7 @@ export function ProfileForm({
   initial = {},
   onSubmit, error, pending,
   layout = "auth", avatarUrl,
+  renderPhoneInput, phoneError,
   languageOptions = DEFAULT_LANGUAGES,
   currencyOptions = DEFAULT_CURRENCIES,
   brand, title = "Your details", subtitle = "Update your personal information.",
@@ -105,6 +117,19 @@ export function ProfileForm({
     street_address: String(data.get("street_address") ?? "").trim(),
     country_of_residence: String(data.get("country_of_residence") ?? "").trim(),
   });
+
+  const phoneField = () => renderPhoneInput ? (
+    <div className="kpa-field">
+      <label htmlFor="phone_number" className="kpa-label">{l.phone}</label>
+      <div className="kpa-phone-slot" data-invalid={phoneError ? "true" : undefined}>
+        {renderPhoneInput({ name: "phone_number", id: "phone_number", defaultValue: initial.phone_number ?? "" })}
+      </div>
+      {phoneError && <p className="kpa-field-error" role="alert">{phoneError}</p>}
+    </div>
+  ) : (
+    <Field name="phone_number" label={l.phone} icon={<PhoneIcon />}
+      type="tel" inputMode="tel" defaultValue={initial.phone_number ?? ""} autoComplete="tel" />
+  );
 
   // ── Embedded (in-app) layout ──────────────────────────────────────────────
   if (layout === "embedded") {
@@ -128,8 +153,7 @@ export function ProfileForm({
           <div className="kpa-section-label">Identity</div>
           <Field name="full_name" label={l.fullName} icon={<UserIcon />} className="kpa-col-full"
             defaultValue={initial.full_name ?? ""} autoComplete="name" required />
-          <Field name="phone_number" label={l.phone} icon={<PhoneIcon />}
-            type="tel" inputMode="tel" defaultValue={initial.phone_number ?? ""} autoComplete="tel" />
+          {phoneField()}
           <Field name="date_of_birth" label={l.dob} icon={<CalendarIcon />} type="date"
             defaultValue={initial.date_of_birth ?? ""} />
 
@@ -163,8 +187,7 @@ export function ProfileForm({
         <Field name="full_name" label={l.fullName} icon={<UserIcon />}
           defaultValue={initial.full_name ?? ""} autoComplete="name" required />
 
-        <Field name="phone_number" label={l.phone} icon={<PhoneIcon />}
-          type="tel" inputMode="tel" defaultValue={initial.phone_number ?? ""} autoComplete="tel" />
+        {phoneField()}
 
         {initial.email != null && (
           <Field name="email_display" label={l.email}

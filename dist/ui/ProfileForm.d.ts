@@ -41,6 +41,19 @@ export interface ProfileFormProps {
     layout?: "auth" | "embedded";
     /** Optional avatar image for the embedded identity strip; falls back to initials. */
     avatarUrl?: string | null;
+    /**
+     * Replace the plain phone text input with the app's own phone control (e.g. a
+     * country picker + dial-code prefix). It is rendered inside the labelled field
+     * and MUST submit its value under `name` (a hidden input is fine) so FormData
+     * picks it up. Use it to enforce the international format while the user types.
+     */
+    renderPhoneInput?: (props: {
+        name: "phone_number";
+        id: string;
+        defaultValue: string;
+    }) => ReactNode;
+    /** Inline message under the phone field (e.g. live format validation). */
+    phoneError?: ReactNode;
     /** Options for the two selects — apps pass their supported sets. */
     languageOptions?: {
         value: string;
@@ -67,4 +80,4 @@ export interface ProfileFormProps {
         country: ReactNode;
     }>;
 }
-export declare function ProfileForm({ initial, onSubmit, error, pending, layout, avatarUrl, languageOptions, currencyOptions, brand, title, subtitle, theme, submitLabel, labels, }: ProfileFormProps): import("react").JSX.Element;
+export declare function ProfileForm({ initial, onSubmit, error, pending, layout, avatarUrl, renderPhoneInput, phoneError, languageOptions, currencyOptions, brand, title, subtitle, theme, submitLabel, labels, }: ProfileFormProps): import("react").JSX.Element;

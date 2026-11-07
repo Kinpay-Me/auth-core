@@ -56,6 +56,15 @@ export interface RegisterProps {
   defaults?: Partial<RegisterValues>;
   emailLocked?: boolean;
 
+  /**
+   * Replace the plain phone text input with the app's own phone control (e.g. a
+   * country picker + dial-code prefix). Rendered inside the labelled field; it
+   * MUST submit its value under `name` (a hidden input is fine).
+   */
+  renderPhoneInput?: (props: { name: "phone"; id: string; defaultValue: string; required: boolean }) => ReactNode;
+  /** Inline message under the phone field (e.g. live format validation). */
+  phoneError?: ReactNode;
+
   loginHref?: string;
   labels?: Partial<typeof DEFAULT_LABELS>;
   LinkComponent?: LinkLike;
@@ -67,6 +76,7 @@ export function Register({
   whatsappEnabled = false,
   defaults, emailLocked,
   loginHref, labels, LinkComponent,
+  renderPhoneInput, phoneError,
 }: RegisterProps) {
   const t = { ...DEFAULT_LABELS, ...labels };
   const [password, setPassword] = useState(defaults?.password ?? "");
@@ -93,12 +103,22 @@ export function Register({
           required defaultValue={defaults?.email}
           {...(emailLocked ? { readOnly: true } : {})}
         />
-        <Field
-          name="phone" type="tel" icon={<PhoneIcon />}
-          label={whatsappEnabled ? t.phone : t.phoneOptional}
-          autoComplete="tel" placeholder={t.phonePlaceholder}
-          required={whatsappEnabled} defaultValue={defaults?.phone}
-        />
+        {renderPhoneInput ? (
+          <div className="kpa-field">
+            <label htmlFor="phone" className="kpa-label">{whatsappEnabled ? t.phone : t.phoneOptional}</label>
+            <div className="kpa-phone-slot" data-invalid={phoneError ? "true" : undefined}>
+              {renderPhoneInput({ name: "phone", id: "phone", defaultValue: defaults?.phone ?? "", required: whatsappEnabled })}
+            </div>
+            {phoneError && <p className="kpa-field-error" role="alert">{phoneError}</p>}
+          </div>
+        ) : (
+          <Field
+            name="phone" type="tel" icon={<PhoneIcon />}
+            label={whatsappEnabled ? t.phone : t.phoneOptional}
+            autoComplete="tel" placeholder={t.phonePlaceholder}
+            required={whatsappEnabled} defaultValue={defaults?.phone}
+          />
+        )}
         <PasswordField
           label={t.password} autoComplete="new-password"
           minLength={8} pattern={PASSWORD_PATTERN}

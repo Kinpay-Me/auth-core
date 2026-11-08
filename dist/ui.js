@@ -4,6 +4,8 @@ import { useState as useState2 } from "react";
 // src/ui/primitives.tsx
 import {
   createElement as createElement2,
+  useEffect,
+  useRef,
   useState
 } from "react";
 
@@ -91,6 +93,17 @@ var AUTH_CSS = `
   font-size: 1rem; font-family: inherit; outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
+/* Host-provided phone control (ProfileForm renderPhoneInput) \u2014 framed like .kpa-input. */
+.kpa-phone-slot {
+  display: flex; align-items: center; min-height: 3rem; padding: 0 0.875rem;
+  background: var(--kpa-field-bg); color: var(--kpa-fg);
+  border: 1px solid var(--kpa-border); border-radius: var(--kpa-radius);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.kpa-phone-slot:focus-within { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
+.kpa-phone-slot input { font-size: 1rem; }
+.kpa-phone-slot[data-invalid="true"] { border-color: var(--kpa-danger); }
+.kpa-field-error { margin: 0; font-size: 0.6875rem; font-weight: 600; color: var(--kpa-danger); }
 .kpa-input::placeholder { color: var(--kpa-muted-fg); opacity: 0.7; }
 .kpa-input:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
 /* Select: drop the OS chevron for a custom one, so it reads like the text fields. */
@@ -126,13 +139,14 @@ var AUTH_CSS = `
   font-size: 0.9375rem; font-weight: 700; font-family: inherit; color: var(--kpa-primary-fg);
   background: linear-gradient(135deg, var(--kpa-primary-from), var(--kpa-primary-to));
   transition: opacity 0.15s, transform 0.05s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0 1.5rem; text-decoration: none; white-space: nowrap;
 }
 .kpa-btn:hover:not(:disabled) { opacity: 0.92; }
 .kpa-btn:active:not(:disabled) { transform: scale(0.985); }
 .kpa-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .kpa-btn-secondary {
   background: none; color: var(--kpa-fg); border: 1px solid var(--kpa-border);
-  text-decoration: none; height: 2.75rem;
+  text-decoration: none;
 }
 .kpa-btn-secondary:hover:not(:disabled) { background: var(--kpa-muted); opacity: 1; }
 
@@ -161,6 +175,18 @@ var AUTH_CSS = `
 .kpa-strength-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--kpa-border); transition: background 0.2s; }
 .kpa-strength-seg[data-on="true"] { background: var(--kpa-strength-color, var(--kpa-primary)); }
 .kpa-strength-label { font-size: 0.6875rem; font-weight: 700; color: var(--kpa-strength-color, var(--kpa-muted-fg)); }
+.kpa-rules { list-style: none; margin: 0.25rem 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 0.75rem; }
+.kpa-rule { display: flex; align-items: center; gap: 0.375rem; font-size: 0.6875rem; font-weight: 600; color: var(--kpa-muted-fg); transition: color 0.15s; }
+.kpa-rule-icon {
+  width: 0.875rem; height: 0.875rem; border-radius: 999px; flex-shrink: 0;
+  border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; opacity: 0.7;
+}
+.kpa-rule-icon svg { width: 0.5rem; height: 0.5rem; }
+.kpa-rule[data-state="met"] { color: #22C55E; }
+.kpa-rule[data-state="met"] .kpa-rule-icon { background: #22C55E; border-color: #22C55E; color: #fff; opacity: 1; }
+.kpa-rule[data-state="error"] { color: var(--kpa-danger); }
+.kpa-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 360px) { .kpa-rules { grid-template-columns: 1fr; } }
 
 .kpa-otp {
   width: 100%; height: 3.25rem; text-align: center; letter-spacing: 0.5em; padding-left: 0.5em;
@@ -172,6 +198,9 @@ var AUTH_CSS = `
 .kpa-otp:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
 
 .kpa-status { text-align: center; padding: 0.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.875rem; }
+/* Status-screen CTAs share one full-width column so primary + secondary buttons
+   match in width and padding instead of shrinking to their labels. */
+.kpa-status > .kpa-alts, .kpa-status > .kpa-btn { align-self: stretch; }
 .kpa-status-icon { width: 3.5rem; height: 3.5rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
 .kpa-status-icon[data-variant="loading"] { color: var(--kpa-primary); }
 .kpa-status-icon[data-variant="success"] { background: color-mix(in srgb, #22C55E 12%, transparent); color: #22C55E; }
@@ -357,6 +386,13 @@ function SelectField({ name, label, options, defaultValue, required, icon, class
     ] })
   ] });
 }
+var PASSWORD_RULES = [
+  { id: "length", label: "At least 8 characters", test: (p) => p.length >= 8 },
+  { id: "upper", label: "One uppercase letter", test: (p) => /[A-Z]/.test(p) },
+  { id: "lower", label: "One lowercase letter", test: (p) => /[a-z]/.test(p) },
+  { id: "number", label: "One number", test: (p) => /\d/.test(p) },
+  { id: "symbol", label: "One symbol", test: (p) => /[^a-zA-Z\d]/.test(p) }
+];
 function PasswordField({
   name = "password",
   label,
@@ -368,10 +404,23 @@ function PasswordField({
   pattern,
   value,
   onValueChange,
-  strength
+  strength,
+  ruleLabels,
+  ruleMessagePrefix = "Password needs"
 }) {
   const [show, setShow] = useState(false);
+  const [attempted, setAttempted] = useState(false);
+  const inputRef = useRef(null);
   const controlled = value !== void 0 && onValueChange !== void 0;
+  const pw = value ?? "";
+  const rules = PASSWORD_RULES.map((r) => ({ ...r, label: ruleLabels?.[r.id] ?? r.label, met: r.test(pw) }));
+  const firstUnmet = strength ? rules.find((r) => !r.met) : void 0;
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el || !strength) return;
+    el.setCustomValidity(pw && firstUnmet ? `${ruleMessagePrefix}: ${firstUnmet.label.toLowerCase()}.` : "");
+  }, [strength, pw, firstUnmet, ruleMessagePrefix]);
+  const hintId = `${name}-rules`;
   return /* @__PURE__ */ jsxs("div", { className: "kpa-field", children: [
     (label || labelExtra) && /* @__PURE__ */ jsxs("div", { className: "kpa-field-row", children: [
       label && /* @__PURE__ */ jsx("label", { htmlFor: name, className: "kpa-label", children: label }),
@@ -382,6 +431,7 @@ function PasswordField({
       /* @__PURE__ */ jsx(
         "input",
         {
+          ref: inputRef,
           id: name,
           name,
           type: show ? "text" : "password",
@@ -391,6 +441,9 @@ function PasswordField({
           placeholder,
           minLength,
           pattern,
+          "aria-describedby": strength ? hintId : void 0,
+          "aria-invalid": strength && attempted && !!firstUnmet ? true : void 0,
+          onInvalid: () => setAttempted(true),
           ...controlled ? { value, onChange: (e) => onValueChange(e.target.value) } : {}
         }
       ),
@@ -405,7 +458,20 @@ function PasswordField({
         }
       )
     ] }),
-    strength && /* @__PURE__ */ jsx(PasswordStrengthMeter, { password: value ?? "" })
+    strength && /* @__PURE__ */ jsx(PasswordStrengthMeter, { password: pw }),
+    strength && /* @__PURE__ */ jsx("ul", { id: hintId, className: "kpa-rules", "aria-live": "polite", children: rules.map((r) => /* @__PURE__ */ jsxs(
+      "li",
+      {
+        className: "kpa-rule",
+        "data-state": r.met ? "met" : attempted ? "error" : "pending",
+        children: [
+          /* @__PURE__ */ jsx("span", { className: "kpa-rule-icon", "aria-hidden": true, children: r.met ? /* @__PURE__ */ jsx(CheckIcon, {}) : null }),
+          r.label,
+          /* @__PURE__ */ jsx("span", { className: "kpa-sr-only", children: r.met ? " (done)" : " (required)" })
+        ]
+      },
+      r.id
+    )) })
   ] });
 }
 var STRENGTH = [
@@ -417,12 +483,7 @@ var STRENGTH = [
 ];
 function PasswordStrengthMeter({ password }) {
   if (!password) return null;
-  let met = 0;
-  if (password.length >= 8) met++;
-  if (/[a-z]/.test(password)) met++;
-  if (/[A-Z]/.test(password)) met++;
-  if (/\d/.test(password)) met++;
-  if (/[^a-zA-Z\d]/.test(password)) met++;
+  const met = PASSWORD_RULES.filter((r) => r.test(password)).length;
   const score = Math.max(0, met - 1);
   const { label, color } = STRENGTH[score];
   return /* @__PURE__ */ jsxs("div", { className: "kpa-strength", style: { ["--kpa-strength-color"]: color }, children: [
@@ -613,7 +674,9 @@ function Register({
   emailLocked,
   loginHref,
   labels,
-  LinkComponent
+  LinkComponent,
+  renderPhoneInput,
+  phoneError
 }) {
   const t = { ...DEFAULT_LABELS, ...labels };
   const [password, setPassword] = useState3(defaults?.password ?? "");
@@ -652,7 +715,11 @@ function Register({
           ...emailLocked ? { readOnly: true } : {}
         }
       ),
-      /* @__PURE__ */ jsx3(
+      renderPhoneInput ? /* @__PURE__ */ jsxs3("div", { className: "kpa-field", children: [
+        /* @__PURE__ */ jsx3("label", { htmlFor: "phone", className: "kpa-label", children: whatsappEnabled ? t.phone : t.phoneOptional }),
+        /* @__PURE__ */ jsx3("div", { className: "kpa-phone-slot", "data-invalid": phoneError ? "true" : void 0, children: renderPhoneInput({ name: "phone", id: "phone", defaultValue: defaults?.phone ?? "", required: whatsappEnabled }) }),
+        phoneError && /* @__PURE__ */ jsx3("p", { className: "kpa-field-error", role: "alert", children: phoneError })
+      ] }) : /* @__PURE__ */ jsx3(
         Field,
         {
           name: "phone",
@@ -1143,6 +1210,8 @@ function ProfileForm({
   pending,
   layout = "auth",
   avatarUrl,
+  renderPhoneInput,
+  phoneError,
   languageOptions = DEFAULT_LANGUAGES,
   currencyOptions = DEFAULT_CURRENCIES,
   brand,
@@ -1172,6 +1241,22 @@ function ProfileForm({
     street_address: String(data.get("street_address") ?? "").trim(),
     country_of_residence: String(data.get("country_of_residence") ?? "").trim()
   });
+  const phoneField = () => renderPhoneInput ? /* @__PURE__ */ jsxs8("div", { className: "kpa-field", children: [
+    /* @__PURE__ */ jsx8("label", { htmlFor: "phone_number", className: "kpa-label", children: l.phone }),
+    /* @__PURE__ */ jsx8("div", { className: "kpa-phone-slot", "data-invalid": phoneError ? "true" : void 0, children: renderPhoneInput({ name: "phone_number", id: "phone_number", defaultValue: initial.phone_number ?? "" }) }),
+    phoneError && /* @__PURE__ */ jsx8("p", { className: "kpa-field-error", role: "alert", children: phoneError })
+  ] }) : /* @__PURE__ */ jsx8(
+    Field,
+    {
+      name: "phone_number",
+      label: l.phone,
+      icon: /* @__PURE__ */ jsx8(PhoneIcon, {}),
+      type: "tel",
+      inputMode: "tel",
+      defaultValue: initial.phone_number ?? "",
+      autoComplete: "tel"
+    }
+  );
   if (layout === "embedded") {
     return /* @__PURE__ */ jsxs8("div", { className: "kpa-root", "data-kpa-embed": "", ...theme ? { "data-kpa-theme": theme } : {}, children: [
       /* @__PURE__ */ jsx8(AuthStyles, {}),
@@ -1197,18 +1282,7 @@ function ProfileForm({
             required: true
           }
         ),
-        /* @__PURE__ */ jsx8(
-          Field,
-          {
-            name: "phone_number",
-            label: l.phone,
-            icon: /* @__PURE__ */ jsx8(PhoneIcon, {}),
-            type: "tel",
-            inputMode: "tel",
-            defaultValue: initial.phone_number ?? "",
-            autoComplete: "tel"
-          }
-        ),
+        phoneField(),
         /* @__PURE__ */ jsx8(
           Field,
           {
@@ -1282,18 +1356,7 @@ function ProfileForm({
           required: true
         }
       ),
-      /* @__PURE__ */ jsx8(
-        Field,
-        {
-          name: "phone_number",
-          label: l.phone,
-          icon: /* @__PURE__ */ jsx8(PhoneIcon, {}),
-          type: "tel",
-          inputMode: "tel",
-          defaultValue: initial.phone_number ?? "",
-          autoComplete: "tel"
-        }
-      ),
+      phoneField(),
       initial.email != null && /* @__PURE__ */ jsx8(
         Field,
         {
@@ -1376,6 +1439,7 @@ export {
   MagicLinkRequest,
   MailIcon,
   OtpField,
+  PASSWORD_RULES,
   PasswordField,
   PasswordStrengthMeter,
   PhoneIcon,

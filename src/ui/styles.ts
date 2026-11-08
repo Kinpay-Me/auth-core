@@ -92,6 +92,17 @@ export const AUTH_CSS = `
   font-size: 1rem; font-family: inherit; outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
+/* Host-provided phone control (ProfileForm renderPhoneInput) — framed like .kpa-input. */
+.kpa-phone-slot {
+  display: flex; align-items: center; min-height: 3rem; padding: 0 0.875rem;
+  background: var(--kpa-field-bg); color: var(--kpa-fg);
+  border: 1px solid var(--kpa-border); border-radius: var(--kpa-radius);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.kpa-phone-slot:focus-within { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
+.kpa-phone-slot input { font-size: 1rem; }
+.kpa-phone-slot[data-invalid="true"] { border-color: var(--kpa-danger); }
+.kpa-field-error { margin: 0; font-size: 0.6875rem; font-weight: 600; color: var(--kpa-danger); }
 .kpa-input::placeholder { color: var(--kpa-muted-fg); opacity: 0.7; }
 .kpa-input:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
 /* Select: drop the OS chevron for a custom one, so it reads like the text fields. */
@@ -127,13 +138,14 @@ export const AUTH_CSS = `
   font-size: 0.9375rem; font-weight: 700; font-family: inherit; color: var(--kpa-primary-fg);
   background: linear-gradient(135deg, var(--kpa-primary-from), var(--kpa-primary-to));
   transition: opacity 0.15s, transform 0.05s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0 1.5rem; text-decoration: none; white-space: nowrap;
 }
 .kpa-btn:hover:not(:disabled) { opacity: 0.92; }
 .kpa-btn:active:not(:disabled) { transform: scale(0.985); }
 .kpa-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .kpa-btn-secondary {
   background: none; color: var(--kpa-fg); border: 1px solid var(--kpa-border);
-  text-decoration: none; height: 2.75rem;
+  text-decoration: none;
 }
 .kpa-btn-secondary:hover:not(:disabled) { background: var(--kpa-muted); opacity: 1; }
 
@@ -162,6 +174,18 @@ export const AUTH_CSS = `
 .kpa-strength-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--kpa-border); transition: background 0.2s; }
 .kpa-strength-seg[data-on="true"] { background: var(--kpa-strength-color, var(--kpa-primary)); }
 .kpa-strength-label { font-size: 0.6875rem; font-weight: 700; color: var(--kpa-strength-color, var(--kpa-muted-fg)); }
+.kpa-rules { list-style: none; margin: 0.25rem 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 0.75rem; }
+.kpa-rule { display: flex; align-items: center; gap: 0.375rem; font-size: 0.6875rem; font-weight: 600; color: var(--kpa-muted-fg); transition: color 0.15s; }
+.kpa-rule-icon {
+  width: 0.875rem; height: 0.875rem; border-radius: 999px; flex-shrink: 0;
+  border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; opacity: 0.7;
+}
+.kpa-rule-icon svg { width: 0.5rem; height: 0.5rem; }
+.kpa-rule[data-state="met"] { color: #22C55E; }
+.kpa-rule[data-state="met"] .kpa-rule-icon { background: #22C55E; border-color: #22C55E; color: #fff; opacity: 1; }
+.kpa-rule[data-state="error"] { color: var(--kpa-danger); }
+.kpa-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 360px) { .kpa-rules { grid-template-columns: 1fr; } }
 
 .kpa-otp {
   width: 100%; height: 3.25rem; text-align: center; letter-spacing: 0.5em; padding-left: 0.5em;
@@ -173,6 +197,9 @@ export const AUTH_CSS = `
 .kpa-otp:focus { border-color: var(--kpa-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--kpa-primary) 18%, transparent); }
 
 .kpa-status { text-align: center; padding: 0.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.875rem; }
+/* Status-screen CTAs share one full-width column so primary + secondary buttons
+   match in width and padding instead of shrinking to their labels. */
+.kpa-status > .kpa-alts, .kpa-status > .kpa-btn { align-self: stretch; }
 .kpa-status-icon { width: 3.5rem; height: 3.5rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
 .kpa-status-icon[data-variant="loading"] { color: var(--kpa-primary); }
 .kpa-status-icon[data-variant="success"] { background: color-mix(in srgb, #22C55E 12%, transparent); color: #22C55E; }

@@ -16,7 +16,7 @@ export { ProfileForm, type ProfileFormProps, type ProfileValues } from "./Profil
 export {
   AuthCard, type AuthCardProps,
   AuthForm, Field, type FieldProps, SelectField, type SelectFieldProps, PasswordField, type PasswordFieldProps,
-  PasswordStrengthMeter, Checkbox,
+  PasswordStrengthMeter, PASSWORD_RULES, type PasswordRuleId, Checkbox,
   OtpField, type OtpFieldProps, StatusScreen, type StatusScreenProps,
   SubmitButton, FormError, Divider, AuthLink,
   type LinkLike, type NavProps,

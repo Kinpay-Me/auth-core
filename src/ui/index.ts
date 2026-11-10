@@ -18,7 +18,7 @@ export {
   AuthForm, Field, type FieldProps, SelectField, type SelectFieldProps, PasswordField, type PasswordFieldProps,
   PasswordStrengthMeter, PASSWORD_RULES, type PasswordRuleId, Checkbox,
   OtpField, type OtpFieldProps, StatusScreen, type StatusScreenProps,
-  SubmitButton, FormError, Divider, AuthLink,
+  SubmitButton, FormError, Divider, AuthLink, AuthSwitch,
   type LinkLike, type NavProps,
   MailIcon, LockIcon, PhoneIcon, UserIcon, EyeIcon, EyeOffIcon, CheckIcon,
   SpinnerIcon, CheckCircleIcon, XCircleIcon,

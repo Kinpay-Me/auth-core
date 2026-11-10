@@ -36,9 +36,11 @@ export interface LoginProps {
     magicLinkLabel?: ReactNode;
     /** Shown only if provided. */
     registerHref?: string;
+    /** The register way as a full outlined button under a divider, not a small link. */
+    registerAsButton?: boolean;
     forgotPasswordHref?: string;
     magicLinkHref?: string;
     showStaySignedIn?: boolean;
     LinkComponent?: LinkLike;
 }
-export declare function Login({ onSubmit, error, pending, brand, title, subtitle, theme, badges, identifierLabel, identifierPlaceholder, passwordLabel, forgotPasswordLabel, staySignedInLabel, submitLabel, submitPendingLabel, registerPrompt, registerLabel, magicLinkLabel, registerHref, forgotPasswordHref, magicLinkHref, showStaySignedIn, LinkComponent, }: LoginProps): import("react").JSX.Element;
+export declare function Login({ onSubmit, error, pending, brand, title, subtitle, theme, badges, identifierLabel, identifierPlaceholder, passwordLabel, forgotPasswordLabel, staySignedInLabel, submitLabel, submitPendingLabel, registerPrompt, registerLabel, magicLinkLabel, registerHref, registerAsButton, forgotPasswordHref, magicLinkHref, showStaySignedIn, LinkComponent, }: LoginProps): import("react").JSX.Element;

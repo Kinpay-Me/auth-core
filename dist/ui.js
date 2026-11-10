@@ -511,8 +511,21 @@ function Divider({ label = "or" }) {
     /* @__PURE__ */ jsx("div", { className: "kpa-divider-line" })
   ] });
 }
+function AuthSwitch({ prompt, label, href, button = false, LinkComponent }) {
+  if (button) {
+    return /* @__PURE__ */ jsxs(Fragment, { children: [
+      /* @__PURE__ */ jsx(Divider, { label: prompt }),
+      /* @__PURE__ */ jsx("div", { className: "kpa-alts", children: /* @__PURE__ */ jsx(AuthLink, { href, className: "kpa-btn kpa-btn-secondary", LinkComponent, children: label }) })
+    ] });
+  }
+  return /* @__PURE__ */ jsxs("div", { className: "kpa-foot", children: [
+    prompt,
+    " ",
+    /* @__PURE__ */ jsx(AuthLink, { href, className: "kpa-link", LinkComponent, children: label })
+  ] });
+}
 function AuthForm({ onSubmit, children, className }) {
-  return /* @__PURE__ */ jsx("form", { className: className ? `kpa-form ${className}` : "kpa-form", onSubmit: (e) => {
+  return /* @__PURE__ */ jsx("form", { method: "post", className: className ? `kpa-form ${className}` : "kpa-form", onSubmit: (e) => {
     e.preventDefault();
     onSubmit(new FormData(e.currentTarget), e);
   }, children });
@@ -583,6 +596,7 @@ function Login({
   registerLabel = "Create an Account",
   magicLinkLabel = "Email me a sign-in link",
   registerHref,
+  registerAsButton = false,
   forgotPasswordHref,
   magicLinkHref,
   showStaySignedIn = true,
@@ -617,11 +631,7 @@ function Login({
       showStaySignedIn && /* @__PURE__ */ jsx2(Checkbox, { checked: staySignedIn, onChange: setStaySignedIn, children: staySignedInLabel }),
       /* @__PURE__ */ jsx2(SubmitButton, { pending, pendingLabel: submitPendingLabel, children: submitLabel })
     ] }),
-    registerHref && /* @__PURE__ */ jsxs2("div", { className: "kpa-foot", children: [
-      registerPrompt,
-      " ",
-      /* @__PURE__ */ jsx2(AuthLink, { href: registerHref, className: "kpa-link", LinkComponent, children: registerLabel })
-    ] }),
+    registerHref && /* @__PURE__ */ jsx2(AuthSwitch, { prompt: registerPrompt, label: registerLabel, href: registerHref, button: registerAsButton, LinkComponent }),
     magicLinkHref && /* @__PURE__ */ jsxs2(Fragment2, { children: [
       /* @__PURE__ */ jsx2(Divider, {}),
       /* @__PURE__ */ jsx2("div", { className: "kpa-alts", children: /* @__PURE__ */ jsxs2(
@@ -673,6 +683,7 @@ function Register({
   defaults,
   emailLocked,
   loginHref,
+  loginAsButton = false,
   labels,
   LinkComponent,
   renderPhoneInput,
@@ -746,11 +757,7 @@ function Register({
       ),
       /* @__PURE__ */ jsx3(SubmitButton, { pending, pendingLabel: t.submitting, children: t.submit })
     ] }),
-    loginHref && /* @__PURE__ */ jsxs3("div", { className: "kpa-foot", children: [
-      t.haveAccount,
-      " ",
-      /* @__PURE__ */ jsx3(AuthLink, { href: loginHref, className: "kpa-link", LinkComponent, children: t.signIn })
-    ] })
+    loginHref && /* @__PURE__ */ jsx3(AuthSwitch, { prompt: t.haveAccount, label: t.signIn, href: loginHref, button: loginAsButton, LinkComponent })
   ] });
 }
 
@@ -1423,6 +1430,7 @@ export {
   AuthForm,
   AuthLink,
   AuthStyles,
+  AuthSwitch,
   CheckCircleIcon,
   CheckIcon,
   Checkbox,

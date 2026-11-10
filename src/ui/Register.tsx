@@ -8,7 +8,7 @@
  */
 import { useState, type ReactNode } from "react";
 import {
-  AuthCard, AuthForm, Field, PasswordField, SubmitButton, FormError, AuthLink,
+  AuthCard, AuthForm, Field, PasswordField, SubmitButton, FormError, AuthSwitch,
   UserIcon, MailIcon, PhoneIcon, type LinkLike,
 } from "./primitives";
 
@@ -66,6 +66,8 @@ export interface RegisterProps {
   phoneError?: ReactNode;
 
   loginHref?: string;
+  /** The sign-in way as a full outlined button under a divider, not a small link. */
+  loginAsButton?: boolean;
   labels?: Partial<typeof DEFAULT_LABELS>;
   LinkComponent?: LinkLike;
 }
@@ -75,7 +77,7 @@ export function Register({
   brand, theme, badges, notice,
   whatsappEnabled = false,
   defaults, emailLocked,
-  loginHref, labels, LinkComponent,
+  loginHref, loginAsButton = false, labels, LinkComponent,
   renderPhoneInput, phoneError,
 }: RegisterProps) {
   const t = { ...DEFAULT_LABELS, ...labels };
@@ -129,12 +131,7 @@ export function Register({
       </AuthForm>
 
       {loginHref && (
-        <div className="kpa-foot">
-          {t.haveAccount}{" "}
-          <AuthLink href={loginHref} className="kpa-link" LinkComponent={LinkComponent}>
-            {t.signIn}
-          </AuthLink>
-        </div>
+        <AuthSwitch prompt={t.haveAccount} label={t.signIn} href={loginHref} button={loginAsButton} LinkComponent={LinkComponent} />
       )}
     </AuthCard>
   );

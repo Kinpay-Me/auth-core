@@ -316,7 +316,7 @@ export function FormError({ message }: { message?: string | null }) {
   return <div className="kpa-error"><p className="kpa-error-text">{message}</p></div>;
 }
 
-export function Divider({ label = "or" }: { label?: string }) {
+export function Divider({ label = "or" }: { label?: ReactNode }) {
   return (
     <div className="kpa-divider">
       <div className="kpa-divider-line" />
@@ -326,10 +326,41 @@ export function Divider({ label = "or" }: { label?: string }) {
   );
 }
 
-/** Wraps children in a <form> whose submit reads the fields and calls onValues. */
+/**
+ * The way to the other auth page under a form ("New to KinPay? Create an account").
+ * `button`: a divider carrying the prompt, then a full-width outlined button, like the Circles phone app.
+ * Otherwise the small centred link it has always been.
+ */
+export function AuthSwitch({ prompt, label, href, button = false, LinkComponent }: {
+  prompt: ReactNode; label: ReactNode; href: string; button?: boolean; LinkComponent?: LinkLike;
+}) {
+  if (button) {
+    return (
+      <>
+        <Divider label={prompt} />
+        <div className="kpa-alts">
+          <AuthLink href={href} className="kpa-btn kpa-btn-secondary" LinkComponent={LinkComponent}>{label}</AuthLink>
+        </div>
+      </>
+    );
+  }
+  return (
+    <div className="kpa-foot">
+      {prompt}{" "}
+      <AuthLink href={href} className="kpa-link" LinkComponent={LinkComponent}>{label}</AuthLink>
+    </div>
+  );
+}
+
+/**
+ * Wraps children in a <form> whose submit reads the fields and calls onValues.
+ * `method="post"`: if the page is submitted before React has hydrated (slow JS, a script error), the
+ * browser sends the form natively; the default GET would put every field, the password included, in
+ * the address bar, history and server logs. POST keeps them in the body; the app's route can answer it.
+ */
 export function AuthForm({ onSubmit, children, className }: { onSubmit: (data: FormData, e: FormEvent<HTMLFormElement>) => void; children: ReactNode; className?: string }) {
   return (
-    <form className={className ? `kpa-form ${className}` : "kpa-form"} onSubmit={(e) => { e.preventDefault(); onSubmit(new FormData(e.currentTarget), e); }}>
+    <form method="post" className={className ? `kpa-form ${className}` : "kpa-form"} onSubmit={(e) => { e.preventDefault(); onSubmit(new FormData(e.currentTarget), e); }}>
       {children}
     </form>
   );

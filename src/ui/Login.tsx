@@ -9,7 +9,7 @@
 import { useState, type ReactNode } from "react";
 import {
   AuthCard, AuthForm, Field, PasswordField, Checkbox, SubmitButton, FormError,
-  Divider, AuthLink, MailIcon, type LinkLike,
+  Divider, AuthLink, AuthSwitch, MailIcon, type LinkLike,
 } from "./primitives";
 
 export interface LoginValues {
@@ -45,6 +45,8 @@ export interface LoginProps {
 
   /** Shown only if provided. */
   registerHref?: string;
+  /** The register way as a full outlined button under a divider, not a small link. */
+  registerAsButton?: boolean;
   forgotPasswordHref?: string;
   magicLinkHref?: string;
 
@@ -67,7 +69,7 @@ export function Login({
   registerPrompt = "New to KinPay?",
   registerLabel = "Create an Account",
   magicLinkLabel = "Email me a sign-in link",
-  registerHref, forgotPasswordHref, magicLinkHref,
+  registerHref, registerAsButton = false, forgotPasswordHref, magicLinkHref,
   showStaySignedIn = true,
   LinkComponent,
 }: LoginProps) {
@@ -110,12 +112,7 @@ export function Login({
       </AuthForm>
 
       {registerHref && (
-        <div className="kpa-foot">
-          {registerPrompt}{" "}
-          <AuthLink href={registerHref} className="kpa-link" LinkComponent={LinkComponent}>
-            {registerLabel}
-          </AuthLink>
-        </div>
+        <AuthSwitch prompt={registerPrompt} label={registerLabel} href={registerHref} button={registerAsButton} LinkComponent={LinkComponent} />
       )}
 
       {magicLinkHref && (

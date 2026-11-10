@@ -58,8 +58,10 @@ export interface RegisterProps {
     /** Inline message under the phone field (e.g. live format validation). */
     phoneError?: ReactNode;
     loginHref?: string;
+    /** The sign-in way as a full outlined button under a divider, not a small link. */
+    loginAsButton?: boolean;
     labels?: Partial<typeof DEFAULT_LABELS>;
     LinkComponent?: LinkLike;
 }
-export declare function Register({ onSubmit, error, pending, brand, theme, badges, notice, whatsappEnabled, defaults, emailLocked, loginHref, labels, LinkComponent, renderPhoneInput, phoneError, }: RegisterProps): import("react").JSX.Element;
+export declare function Register({ onSubmit, error, pending, brand, theme, badges, notice, whatsappEnabled, defaults, emailLocked, loginHref, loginAsButton, labels, LinkComponent, renderPhoneInput, phoneError, }: RegisterProps): import("react").JSX.Element;
 export {};

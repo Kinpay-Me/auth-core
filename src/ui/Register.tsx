@@ -51,6 +51,8 @@ export interface RegisterProps {
 
   /** When on, phone is required and labelled without "(Optional)". */
   whatsappEnabled?: boolean;
+  /** Off leaves the phone field out entirely (an email-only sign-up); `phone` is then undefined. */
+  showPhone?: boolean;
 
   /** Prefill + lock (invite flows). */
   defaults?: Partial<RegisterValues>;
@@ -75,7 +77,7 @@ export interface RegisterProps {
 export function Register({
   onSubmit, error, pending,
   brand, theme, badges, notice,
-  whatsappEnabled = false,
+  whatsappEnabled = false, showPhone = true,
   defaults, emailLocked,
   loginHref, loginAsButton = false, labels, LinkComponent,
   renderPhoneInput, phoneError,
@@ -91,7 +93,7 @@ export function Register({
       <AuthForm onSubmit={(data) => onSubmit({
         fullName: String(data.get("fullName") ?? ""),
         email: String(data.get("email") ?? ""),
-        phone: String(data.get("phone") ?? "") || undefined,
+        phone: showPhone ? String(data.get("phone") ?? "") || undefined : undefined,
         password,
       })}>
         <Field
@@ -105,7 +107,7 @@ export function Register({
           required defaultValue={defaults?.email}
           {...(emailLocked ? { readOnly: true } : {})}
         />
-        {renderPhoneInput ? (
+        {!showPhone ? null : renderPhoneInput ? (
           <div className="kpa-field">
             <label htmlFor="phone" className="kpa-label">{whatsappEnabled ? t.phone : t.phoneOptional}</label>
             <div className="kpa-phone-slot" data-invalid={phoneError ? "true" : undefined}>

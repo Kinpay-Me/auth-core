@@ -41,6 +41,8 @@ export interface RegisterProps {
     notice?: ReactNode;
     /** When on, phone is required and labelled without "(Optional)". */
     whatsappEnabled?: boolean;
+    /** Off leaves the phone field out entirely (an email-only sign-up); `phone` is then undefined. */
+    showPhone?: boolean;
     /** Prefill + lock (invite flows). */
     defaults?: Partial<RegisterValues>;
     emailLocked?: boolean;
@@ -63,5 +65,5 @@ export interface RegisterProps {
     labels?: Partial<typeof DEFAULT_LABELS>;
     LinkComponent?: LinkLike;
 }
-export declare function Register({ onSubmit, error, pending, brand, theme, badges, notice, whatsappEnabled, defaults, emailLocked, loginHref, loginAsButton, labels, LinkComponent, renderPhoneInput, phoneError, }: RegisterProps): import("react").JSX.Element;
+export declare function Register({ onSubmit, error, pending, brand, theme, badges, notice, whatsappEnabled, showPhone, defaults, emailLocked, loginHref, loginAsButton, labels, LinkComponent, renderPhoneInput, phoneError, }: RegisterProps): import("react").JSX.Element;
 export {};

@@ -680,6 +680,7 @@ function Register({
   badges,
   notice,
   whatsappEnabled = false,
+  showPhone = true,
   defaults,
   emailLocked,
   loginHref,
@@ -697,7 +698,7 @@ function Register({
     /* @__PURE__ */ jsxs3(AuthForm, { onSubmit: (data) => onSubmit({
       fullName: String(data.get("fullName") ?? ""),
       email: String(data.get("email") ?? ""),
-      phone: String(data.get("phone") ?? "") || void 0,
+      phone: showPhone ? String(data.get("phone") ?? "") || void 0 : void 0,
       password
     }), children: [
       /* @__PURE__ */ jsx3(
@@ -726,7 +727,7 @@ function Register({
           ...emailLocked ? { readOnly: true } : {}
         }
       ),
-      renderPhoneInput ? /* @__PURE__ */ jsxs3("div", { className: "kpa-field", children: [
+      !showPhone ? null : renderPhoneInput ? /* @__PURE__ */ jsxs3("div", { className: "kpa-field", children: [
         /* @__PURE__ */ jsx3("label", { htmlFor: "phone", className: "kpa-label", children: whatsappEnabled ? t.phone : t.phoneOptional }),
         /* @__PURE__ */ jsx3("div", { className: "kpa-phone-slot", "data-invalid": phoneError ? "true" : void 0, children: renderPhoneInput({ name: "phone", id: "phone", defaultValue: defaults?.phone ?? "", required: whatsappEnabled }) }),
         phoneError && /* @__PURE__ */ jsx3("p", { className: "kpa-field-error", role: "alert", children: phoneError })

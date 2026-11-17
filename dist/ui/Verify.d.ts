@@ -53,6 +53,8 @@ export interface VerifyProps {
     onConfirm: (channel: VerifyChannel, code: string) => void | Promise<void>;
     /** After a contact is verified: the "Continue" button. Without it, no done screen: onConfirm is the end. */
     onContinue?: () => void;
+    /** Send the first contact's code as soon as the screen opens (e.g. right after sign-up), skipping "Send the code". */
+    autoSend?: boolean;
     error?: string | null;
     pending?: boolean;
     /** Called when the reader switches contact or a step changes, so the app can clear its error. */
@@ -67,5 +69,5 @@ export interface VerifyProps {
     labels?: Partial<typeof DEFAULT_LABELS>;
     LinkComponent?: LinkLike;
 }
-export declare function Verify({ contacts, onSendCode, onConfirm, onContinue, error, pending, onStepChange, brand, theme, badges, signOutHref, footer, labels, LinkComponent, }: VerifyProps): import("react").JSX.Element | null;
+export declare function Verify({ contacts, onSendCode, onConfirm, onContinue, autoSend, error, pending, onStepChange, brand, theme, badges, signOutHref, footer, labels, LinkComponent, }: VerifyProps): import("react").JSX.Element | null;
 export {};

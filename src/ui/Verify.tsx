@@ -12,7 +12,7 @@
  * Copy is a single `labels` object with English defaults, so both apps render
  * identical wording out of the box; pass `labels` to translate.
  */
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   AuthCard, AuthForm, OtpField, StatusScreen, SubmitButton, FormError, Divider,
   AuthLink, MailIcon, PhoneIcon, type LinkLike,
@@ -58,6 +58,8 @@ export interface VerifyProps {
   onConfirm: (channel: VerifyChannel, code: string) => void | Promise<void>;
   /** After a contact is verified: the "Continue" button. Without it, no done screen: onConfirm is the end. */
   onContinue?: () => void;
+  /** Send the first contact's code as soon as the screen opens (e.g. right after sign-up), skipping "Send the code". */
+  autoSend?: boolean;
 
   error?: string | null;
   pending?: boolean;
@@ -79,7 +81,7 @@ export interface VerifyProps {
 type Step = "send" | "code" | "done";
 
 export function Verify({
-  contacts, onSendCode, onConfirm, onContinue,
+  contacts, onSendCode, onConfirm, onContinue, autoSend,
   error, pending, onStepChange,
   brand, theme, badges, signOutHref, footer,
   labels, LinkComponent,
@@ -98,6 +100,15 @@ export function Verify({
     return () => clearTimeout(id);
   }, [wait]);
 
+  // Once per screen, even when React runs effects twice in development
+  const autoSent = useRef(false);
+  useEffect(() => {
+    if (!autoSend || autoSent.current || !contacts[0]) return;
+    autoSent.current = true;
+    void send().catch(() => {});  // a failure shows the app's error, on the "send" step
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSend]);
+
   const current = contacts[index];
   if (!current) return null;
   const isPhone = current.channel === "phone";
@@ -110,7 +121,7 @@ export function Verify({
   const send = async () => {
     setBusy(true);
     try {
-      const res = await onSendCode(current.channel);
+      const res = await onSendCode(contacts[index].channel);
       setWait((res && res.resendInSeconds) ?? 60);
       go("code");
     } finally {

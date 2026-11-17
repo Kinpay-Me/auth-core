@@ -1197,7 +1197,7 @@ function ForgotPassword({
 }
 
 // src/ui/Verify.tsx
-import { useEffect as useEffect2, useState as useState7 } from "react";
+import { useEffect as useEffect2, useRef as useRef2, useState as useState7 } from "react";
 import { Fragment as Fragment5, jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
 var DEFAULT_LABELS6 = {
   emailTitle: "Verify your email",
@@ -1226,6 +1226,7 @@ function Verify({
   onSendCode,
   onConfirm,
   onContinue,
+  autoSend,
   error,
   pending,
   onStepChange,
@@ -1248,6 +1249,13 @@ function Verify({
     const id = setTimeout(() => setWait((w) => w - 1), 1e3);
     return () => clearTimeout(id);
   }, [wait]);
+  const autoSent = useRef2(false);
+  useEffect2(() => {
+    if (!autoSend || autoSent.current || !contacts[0]) return;
+    autoSent.current = true;
+    void send().catch(() => {
+    });
+  }, [autoSend]);
   const current = contacts[index];
   if (!current) return null;
   const isPhone = current.channel === "phone";
@@ -1259,7 +1267,7 @@ function Verify({
   const send = async () => {
     setBusy(true);
     try {
-      const res = await onSendCode(current.channel);
+      const res = await onSendCode(contacts[index].channel);
       setWait((res && res.resendInSeconds) ?? 60);
       go("code");
     } finally {

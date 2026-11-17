@@ -11,6 +11,7 @@ export { MagicLinkRequest, type MagicLinkRequestProps } from "./MagicLinkRequest
 export { MagicLinkCallback, type MagicLinkCallbackProps } from "./MagicLinkCallback";
 export { Claim, type ClaimProps, type ClaimValues } from "./Claim";
 export { ForgotPassword, type ForgotPasswordProps } from "./ForgotPassword";
+export { Verify, type VerifyProps, type VerifyContact, type VerifyChannel } from "./Verify";
 export { ProfileForm, type ProfileFormProps, type ProfileValues } from "./ProfileForm";
 
 export {

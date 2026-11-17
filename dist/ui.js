@@ -1196,8 +1196,166 @@ function ForgotPassword({
   ] });
 }
 
+// src/ui/Verify.tsx
+import { useEffect as useEffect2, useState as useState7 } from "react";
+import { Fragment as Fragment5, jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
+var DEFAULT_LABELS6 = {
+  emailTitle: "Verify your email",
+  phoneTitle: "Verify your phone number",
+  emailIntro: "We'll email a six-digit code to",
+  phoneIntro: "We'll text a six-digit code to",
+  sendCode: "Send the code",
+  sending: "Sending\u2026",
+  emailSent: "We emailed a six-digit code to",
+  phoneSent: "We texted a six-digit code to",
+  otp: "Code",
+  verify: "Verify",
+  verifying: "Verifying\u2026",
+  resendIn: "Send a new code in {seconds}s",
+  resend: "Send a new code",
+  useEmail: "Verify your email instead",
+  usePhone: "Verify your phone number instead",
+  doneEmail: "Your email is verified",
+  donePhone: "Your phone number is verified",
+  doneMessage: "Thank you. You can carry on.",
+  continue: "Continue",
+  signOut: "Sign out"
+};
+function Verify({
+  contacts,
+  onSendCode,
+  onConfirm,
+  onContinue,
+  error,
+  pending,
+  onStepChange,
+  brand,
+  theme,
+  badges,
+  signOutHref,
+  footer,
+  labels,
+  LinkComponent
+}) {
+  const t = { ...DEFAULT_LABELS6, ...labels };
+  const [index, setIndex] = useState7(0);
+  const [step, setStep] = useState7("send");
+  const [busy, setBusy] = useState7(false);
+  const [wait, setWait] = useState7(0);
+  const isPending = pending || busy;
+  useEffect2(() => {
+    if (wait <= 0) return;
+    const id = setTimeout(() => setWait((w) => w - 1), 1e3);
+    return () => clearTimeout(id);
+  }, [wait]);
+  const current = contacts[index];
+  if (!current) return null;
+  const isPhone = current.channel === "phone";
+  const other = contacts.findIndex((c, i) => i !== index && c.channel !== current.channel);
+  const go = (next) => {
+    setStep(next);
+    onStepChange?.();
+  };
+  const send = async () => {
+    setBusy(true);
+    try {
+      const res = await onSendCode(current.channel);
+      setWait((res && res.resendInSeconds) ?? 60);
+      go("code");
+    } finally {
+      setBusy(false);
+    }
+  };
+  const confirm = async (code) => {
+    setBusy(true);
+    try {
+      await onConfirm(current.channel, code);
+      if (onContinue) go("done");
+    } finally {
+      setBusy(false);
+    }
+  };
+  const switchTo = (i) => {
+    setIndex(i);
+    setWait(0);
+    go("send");
+  };
+  const title = isPhone ? t.phoneTitle : t.emailTitle;
+  const icon = isPhone ? /* @__PURE__ */ jsx8(PhoneIcon, {}) : /* @__PURE__ */ jsx8(MailIcon, {});
+  if (step === "done") {
+    return /* @__PURE__ */ jsx8(AuthCard, { brand, theme, badges, children: /* @__PURE__ */ jsx8(
+      StatusScreen,
+      {
+        variant: "success",
+        title: isPhone ? t.donePhone : t.doneEmail,
+        message: t.doneMessage,
+        action: /* @__PURE__ */ jsx8("button", { type: "button", className: "kpa-btn", onClick: onContinue, children: t.continue })
+      }
+    ) });
+  }
+  const switcher = other >= 0 ? /* @__PURE__ */ jsxs8(Fragment5, { children: [
+    /* @__PURE__ */ jsx8(Divider, {}),
+    /* @__PURE__ */ jsx8("div", { className: "kpa-alts", children: /* @__PURE__ */ jsxs8("button", { type: "button", className: "kpa-btn kpa-btn-secondary", onClick: () => switchTo(other), children: [
+      contacts[other].channel === "phone" ? /* @__PURE__ */ jsx8(PhoneIcon, {}) : /* @__PURE__ */ jsx8(MailIcon, {}),
+      contacts[other].channel === "phone" ? t.usePhone : t.useEmail
+    ] }) })
+  ] }) : null;
+  const foot = signOutHref ? /* @__PURE__ */ jsx8("div", { className: "kpa-foot", children: /* @__PURE__ */ jsx8(AuthLink, { href: signOutHref, className: "kpa-link", LinkComponent, children: t.signOut }) }) : null;
+  if (step === "code") {
+    return /* @__PURE__ */ jsxs8(
+      AuthCard,
+      {
+        brand,
+        title,
+        theme,
+        badges,
+        subtitle: /* @__PURE__ */ jsxs8(Fragment5, { children: [
+          isPhone ? t.phoneSent : t.emailSent,
+          /* @__PURE__ */ jsx8("br", {}),
+          /* @__PURE__ */ jsx8("strong", { children: current.contact })
+        ] }),
+        children: [
+          /* @__PURE__ */ jsx8(FormError, { message: error }),
+          /* @__PURE__ */ jsxs8(AuthForm, { onSubmit: (data) => confirm(String(data.get("otp") ?? "").trim()), children: [
+            /* @__PURE__ */ jsx8(OtpField, { label: t.otp, autoFocus: true }),
+            /* @__PURE__ */ jsx8(SubmitButton, { pending: isPending, pendingLabel: t.verifying, children: t.verify })
+          ] }),
+          /* @__PURE__ */ jsx8("div", { className: "kpa-foot", children: wait > 0 ? /* @__PURE__ */ jsx8("span", { children: t.resendIn.replace("{seconds}", String(wait)) }) : /* @__PURE__ */ jsx8("button", { type: "button", className: "kpa-link", disabled: isPending, onClick: send, children: t.resend }) }),
+          footer,
+          switcher,
+          foot
+        ]
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxs8(
+    AuthCard,
+    {
+      brand,
+      title,
+      theme,
+      badges,
+      subtitle: /* @__PURE__ */ jsxs8(Fragment5, { children: [
+        isPhone ? t.phoneIntro : t.emailIntro,
+        /* @__PURE__ */ jsx8("br", {}),
+        /* @__PURE__ */ jsx8("strong", { children: current.contact })
+      ] }),
+      children: [
+        /* @__PURE__ */ jsx8(FormError, { message: error }),
+        /* @__PURE__ */ jsx8(AuthForm, { onSubmit: send, children: /* @__PURE__ */ jsxs8(SubmitButton, { pending: isPending, pendingLabel: t.sending, children: [
+          icon,
+          t.sendCode
+        ] }) }),
+        footer,
+        switcher,
+        foot
+      ]
+    }
+  );
+}
+
 // src/ui/ProfileForm.tsx
-import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx9, jsxs as jsxs9 } from "react/jsx-runtime";
 var DEFAULT_LANGUAGES = [
   { value: "en", label: "English" },
   { value: "sw", label: "Kiswahili" }
@@ -1249,16 +1407,16 @@ function ProfileForm({
     street_address: String(data.get("street_address") ?? "").trim(),
     country_of_residence: String(data.get("country_of_residence") ?? "").trim()
   });
-  const phoneField = () => renderPhoneInput ? /* @__PURE__ */ jsxs8("div", { className: "kpa-field", children: [
-    /* @__PURE__ */ jsx8("label", { htmlFor: "phone_number", className: "kpa-label", children: l.phone }),
-    /* @__PURE__ */ jsx8("div", { className: "kpa-phone-slot", "data-invalid": phoneError ? "true" : void 0, children: renderPhoneInput({ name: "phone_number", id: "phone_number", defaultValue: initial.phone_number ?? "" }) }),
-    phoneError && /* @__PURE__ */ jsx8("p", { className: "kpa-field-error", role: "alert", children: phoneError })
-  ] }) : /* @__PURE__ */ jsx8(
+  const phoneField = () => renderPhoneInput ? /* @__PURE__ */ jsxs9("div", { className: "kpa-field", children: [
+    /* @__PURE__ */ jsx9("label", { htmlFor: "phone_number", className: "kpa-label", children: l.phone }),
+    /* @__PURE__ */ jsx9("div", { className: "kpa-phone-slot", "data-invalid": phoneError ? "true" : void 0, children: renderPhoneInput({ name: "phone_number", id: "phone_number", defaultValue: initial.phone_number ?? "" }) }),
+    phoneError && /* @__PURE__ */ jsx9("p", { className: "kpa-field-error", role: "alert", children: phoneError })
+  ] }) : /* @__PURE__ */ jsx9(
     Field,
     {
       name: "phone_number",
       label: l.phone,
-      icon: /* @__PURE__ */ jsx8(PhoneIcon, {}),
+      icon: /* @__PURE__ */ jsx9(PhoneIcon, {}),
       type: "tel",
       inputMode: "tel",
       defaultValue: initial.phone_number ?? "",
@@ -1266,24 +1424,24 @@ function ProfileForm({
     }
   );
   if (layout === "embedded") {
-    return /* @__PURE__ */ jsxs8("div", { className: "kpa-root", "data-kpa-embed": "", ...theme ? { "data-kpa-theme": theme } : {}, children: [
-      /* @__PURE__ */ jsx8(AuthStyles, {}),
-      /* @__PURE__ */ jsxs8("div", { className: "kpa-id", children: [
-        /* @__PURE__ */ jsx8("div", { className: "kpa-id-avatar", children: avatarUrl ? /* @__PURE__ */ jsx8("img", { src: avatarUrl, alt: "" }) : initials(initial.full_name) }),
-        /* @__PURE__ */ jsxs8("div", { className: "kpa-id-text", children: [
-          /* @__PURE__ */ jsx8("div", { className: "kpa-id-name", children: initial.full_name || "Your account" }),
-          initial.email != null && /* @__PURE__ */ jsx8("div", { className: "kpa-id-email", children: initial.email })
+    return /* @__PURE__ */ jsxs9("div", { className: "kpa-root", "data-kpa-embed": "", ...theme ? { "data-kpa-theme": theme } : {}, children: [
+      /* @__PURE__ */ jsx9(AuthStyles, {}),
+      /* @__PURE__ */ jsxs9("div", { className: "kpa-id", children: [
+        /* @__PURE__ */ jsx9("div", { className: "kpa-id-avatar", children: avatarUrl ? /* @__PURE__ */ jsx9("img", { src: avatarUrl, alt: "" }) : initials(initial.full_name) }),
+        /* @__PURE__ */ jsxs9("div", { className: "kpa-id-text", children: [
+          /* @__PURE__ */ jsx9("div", { className: "kpa-id-name", children: initial.full_name || "Your account" }),
+          initial.email != null && /* @__PURE__ */ jsx9("div", { className: "kpa-id-email", children: initial.email })
         ] })
       ] }),
-      /* @__PURE__ */ jsx8(FormError, { message: error }),
-      /* @__PURE__ */ jsxs8(AuthForm, { className: "kpa-form-grid", onSubmit: (data) => onSubmit(toValues(data)), children: [
-        /* @__PURE__ */ jsx8("div", { className: "kpa-section-label", children: "Identity" }),
-        /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9(FormError, { message: error }),
+      /* @__PURE__ */ jsxs9(AuthForm, { className: "kpa-form-grid", onSubmit: (data) => onSubmit(toValues(data)), children: [
+        /* @__PURE__ */ jsx9("div", { className: "kpa-section-label", children: "Identity" }),
+        /* @__PURE__ */ jsx9(
           Field,
           {
             name: "full_name",
             label: l.fullName,
-            icon: /* @__PURE__ */ jsx8(UserIcon, {}),
+            icon: /* @__PURE__ */ jsx9(UserIcon, {}),
             className: "kpa-col-full",
             defaultValue: initial.full_name ?? "",
             autoComplete: "name",
@@ -1291,81 +1449,81 @@ function ProfileForm({
           }
         ),
         phoneField(),
-        /* @__PURE__ */ jsx8(
+        /* @__PURE__ */ jsx9(
           Field,
           {
             name: "date_of_birth",
             label: l.dob,
-            icon: /* @__PURE__ */ jsx8(CalendarIcon, {}),
+            icon: /* @__PURE__ */ jsx9(CalendarIcon, {}),
             type: "date",
             defaultValue: initial.date_of_birth ?? ""
           }
         ),
-        /* @__PURE__ */ jsx8("div", { className: "kpa-section-label", children: "Preferences" }),
-        /* @__PURE__ */ jsx8(
+        /* @__PURE__ */ jsx9("div", { className: "kpa-section-label", children: "Preferences" }),
+        /* @__PURE__ */ jsx9(
           SelectField,
           {
             name: "preferred_language",
             label: l.language,
-            icon: /* @__PURE__ */ jsx8(LanguagesIcon, {}),
+            icon: /* @__PURE__ */ jsx9(LanguagesIcon, {}),
             options: languageOptions,
             defaultValue: initial.preferred_language
           }
         ),
-        /* @__PURE__ */ jsx8(
+        /* @__PURE__ */ jsx9(
           SelectField,
           {
             name: "preferred_currency",
             label: l.currency,
-            icon: /* @__PURE__ */ jsx8(CoinIcon, {}),
+            icon: /* @__PURE__ */ jsx9(CoinIcon, {}),
             options: currencyOptions,
             defaultValue: initial.preferred_currency
           }
         ),
-        /* @__PURE__ */ jsx8("div", { className: "kpa-section-label", children: "Location" }),
-        /* @__PURE__ */ jsx8(
+        /* @__PURE__ */ jsx9("div", { className: "kpa-section-label", children: "Location" }),
+        /* @__PURE__ */ jsx9(
           Field,
           {
             name: "street_address",
             label: l.address,
-            icon: /* @__PURE__ */ jsx8(MapPinIcon, {}),
+            icon: /* @__PURE__ */ jsx9(MapPinIcon, {}),
             className: "kpa-col-full",
             defaultValue: initial.street_address ?? "",
             autoComplete: "street-address"
           }
         ),
-        /* @__PURE__ */ jsx8(
+        /* @__PURE__ */ jsx9(
           Field,
           {
             name: "country_of_residence",
             label: l.country,
-            icon: /* @__PURE__ */ jsx8(GlobeIcon, {}),
+            icon: /* @__PURE__ */ jsx9(GlobeIcon, {}),
             className: "kpa-col-full",
             defaultValue: initial.country_of_residence ?? "",
             autoComplete: "country-name"
           }
         ),
-        /* @__PURE__ */ jsx8("div", { className: "kpa-form-foot", children: /* @__PURE__ */ jsx8(SubmitButton, { pending, pendingLabel: "Saving\u2026", children: submitLabel }) })
+        /* @__PURE__ */ jsx9("div", { className: "kpa-form-foot", children: /* @__PURE__ */ jsx9(SubmitButton, { pending, pendingLabel: "Saving\u2026", children: submitLabel }) })
       ] })
     ] });
   }
-  return /* @__PURE__ */ jsxs8(AuthCard, { brand, title, subtitle, theme, children: [
-    /* @__PURE__ */ jsx8(AuthStyles, {}),
-    /* @__PURE__ */ jsx8(FormError, { message: error }),
-    /* @__PURE__ */ jsxs8(AuthForm, { onSubmit: (data) => onSubmit(toValues(data)), children: [
-      /* @__PURE__ */ jsx8(
+  return /* @__PURE__ */ jsxs9(AuthCard, { brand, title, subtitle, theme, children: [
+    /* @__PURE__ */ jsx9(AuthStyles, {}),
+    /* @__PURE__ */ jsx9(FormError, { message: error }),
+    /* @__PURE__ */ jsxs9(AuthForm, { onSubmit: (data) => onSubmit(toValues(data)), children: [
+      /* @__PURE__ */ jsx9(
         Field,
         {
           name: "full_name",
           label: l.fullName,
-          icon: /* @__PURE__ */ jsx8(UserIcon, {}),
+          icon: /* @__PURE__ */ jsx9(UserIcon, {}),
           defaultValue: initial.full_name ?? "",
           autoComplete: "name",
           required: true
         }
       ),
       phoneField(),
-      initial.email != null && /* @__PURE__ */ jsx8(
+      initial.email != null && /* @__PURE__ */ jsx9(
         Field,
         {
           name: "email_display",
@@ -1375,7 +1533,7 @@ function ProfileForm({
           autoComplete: "email"
         }
       ),
-      /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9(
         SelectField,
         {
           name: "preferred_language",
@@ -1384,7 +1542,7 @@ function ProfileForm({
           defaultValue: initial.preferred_language
         }
       ),
-      /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9(
         SelectField,
         {
           name: "preferred_currency",
@@ -1393,7 +1551,7 @@ function ProfileForm({
           defaultValue: initial.preferred_currency
         }
       ),
-      /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9(
         Field,
         {
           name: "date_of_birth",
@@ -1402,7 +1560,7 @@ function ProfileForm({
           defaultValue: initial.date_of_birth ?? ""
         }
       ),
-      /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9(
         Field,
         {
           name: "street_address",
@@ -1411,7 +1569,7 @@ function ProfileForm({
           autoComplete: "street-address"
         }
       ),
-      /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9(
         Field,
         {
           name: "country_of_residence",
@@ -1420,7 +1578,7 @@ function ProfileForm({
           autoComplete: "country-name"
         }
       ),
-      /* @__PURE__ */ jsx8(SubmitButton, { pending, pendingLabel: "Saving\u2026", children: submitLabel })
+      /* @__PURE__ */ jsx9(SubmitButton, { pending, pendingLabel: "Saving\u2026", children: submitLabel })
     ] })
   ] });
 }
@@ -1459,5 +1617,6 @@ export {
   StatusScreen,
   SubmitButton,
   UserIcon,
+  Verify,
   XCircleIcon
 };

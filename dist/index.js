@@ -199,7 +199,12 @@ function safeRedirect(raw, opts = {}) {
   const fallback = opts.fallback ?? "/";
   if (!raw) return fallback;
   if (raw.startsWith("/")) {
-    return /^\/[/\\]/.test(raw) ? fallback : raw;
+    const origin = "https://same-app.invalid";
+    try {
+      return new URL(raw, origin).origin === origin ? raw : fallback;
+    } catch {
+      return fallback;
+    }
   }
   try {
     const url = new URL(raw);

@@ -22,12 +22,19 @@ export function safeRedirect(
   const fallback = opts.fallback ?? "/";
   if (!raw) return fallback;
 
-  // Relative path — allowed, but reject anything the browser would read as an
-  // authority rather than a path. Per the WHATWG URL spec a backslash is
-  // treated as a slash for special schemes, so "/\evil.com" resolves to
-  // https://evil.com/ exactly like "//evil.com" does — both must be rejected.
+  // Relative path — allowed only if it resolves to this app's own origin. The
+  // URL parser reads more than "//" as an authority: a backslash counts as a
+  // slash for special schemes ("/\evil.com"), and tabs and newlines are
+  // stripped before parsing ("/\t/evil.com" → "//evil.com"). So rather than
+  // listing the tricks, resolve the path against a placeholder origin and
+  // reject anything that lands somewhere else.
   if (raw.startsWith("/")) {
-    return /^\/[/\\]/.test(raw) ? fallback : raw;
+    const origin = "https://same-app.invalid";
+    try {
+      return new URL(raw, origin).origin === origin ? raw : fallback;
+    } catch {
+      return fallback;
+    }
   }
 
   // Absolute URL — only http(s) to an allowed host.

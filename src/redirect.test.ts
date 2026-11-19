@@ -36,6 +36,15 @@ describe("safeRedirect", () => {
     expect(safeRedirect("/\\evil.com/path?a=1", opts)).toBe("/");
   });
 
+  // Tabs and newlines are stripped by the URL parser before it reads the
+  // authority, so "/\t/evil.com" becomes "//evil.com" in the browser.
+  it("rejects targets that become protocol-relative once tabs and newlines are stripped", () => {
+    expect(safeRedirect("/\t/evil.com", opts)).toBe("/");
+    expect(safeRedirect("/\n/evil.com", opts)).toBe("/");
+    expect(safeRedirect("/\r\n/evil.com/path", opts)).toBe("/");
+    expect(safeRedirect("/\t\\evil.com", opts)).toBe("/");
+  });
+
   // The property that actually matters: whatever comes back must resolve to the
   // app's own origin (or an allowed host), never off-site. Asserting on the
   // return value alone would miss a string the URL parser reinterprets.
@@ -46,6 +55,8 @@ describe("safeRedirect", () => {
       "/\\evil.com",
       "/\\/evil.com",
       "/\\\\evil.com",
+      "/\t/evil.com",
+      "/\n\\evil.com",
       "https://evil.com/phish",
       "https://notkinpay.me.evil.com",
       "javascript:alert(1)",
